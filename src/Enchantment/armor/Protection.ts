@@ -1,8 +1,8 @@
-import { DamageType, DamageTypeID, Effect, EffectID, Eoc, Flag, FlagID, Spell } from "@sosarciel-cdda/schema";
-import { CON_SPELL_FLAG, EMDef, MAX_NUM } from "@src/EMDefine";
+import { Effect, Flag } from "@sosarciel-cdda/schema";
+import { EMDef } from "@src/EMDefine";
 import { DataManager } from "@sosarciel-cdda/event";
 import { JObject } from "@zwa73/utils";
-import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
+import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchData } from "../EnchInterface";
 import { enchLvlID } from "../Common";
 import { FragileEID, FragileMaxLvl } from "./Fragile";
@@ -24,17 +24,17 @@ export async function Protection(dm:DataManager) {
         max_intensity:15,
         enchantments:[{
             condition:"ALWAYS",
-            values:[{
-                value:"ARMOR_BASH",
+            incoming_damage_mod_post_absorbed:[{
+                type:"bash",
                 multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
             },{
-                value:"ARMOR_CUT",
+                type:"cut",
                 multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
             },{
-                value:"ARMOR_STAB",
+                type:"stab",
                 multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
             },{
-                value:"ARMOR_BULLET",
+                type:"bullet",
                 multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
             }]
         }]

@@ -1,13 +1,13 @@
 import { EMDef } from "@src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
-import { BoolObj, Color, ColorList, EocEffect, Flag, FlagID, MessageRatType } from "@sosarciel-cdda/schema";
+import { BoolExpr, Color, ColorList, EocEffect, Flag, FlagID } from "@sosarciel-cdda/schema";
 import { EnchData } from "./EnchInterface";
 import { enchLvlID } from "./Common";
 
 
 
 /**手持触发 */
-export function genWieldTrigger(dm:DataManager,flagId:FlagID,hook:CharHook,effects:EocEffect[],condition?:BoolObj){
+export function genWieldTrigger(dm:DataManager,flagId:FlagID,hook:CharHook,effects:EocEffect[],condition?:BoolExpr){
     const eoc = EMDef.genActEoc(`${flagId}_WieldTigger`,effects,{and:[
         {u_has_wielded_with_flag:flagId},
         ...(condition ? [condition] : [])

@@ -31,8 +31,8 @@ export async function debugItem(dm:DataManager,enchFlagList:Flag[]){
         "//GENERIC":true,
         name:{str_sp:"附魔调试工具"},
         description:"附魔调试工具",
-        weight:0,
-        volume:0,
+        weight:'0 g',
+        volume:'0 ml',
         symbol:"o",
         flags:["ZERO_WEIGHT","UNBREAKABLE"],
         use_action:{
