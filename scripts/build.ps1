@@ -1,3 +1,3 @@
-npm run compile
+﻿npm run compile
 Write-Output 开始构建
-node --trace-warnings index
+node --trace-warnings dist/index

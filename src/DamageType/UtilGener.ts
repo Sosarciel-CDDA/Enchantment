@@ -1,5 +1,5 @@
 
-import { BoolObj, DamageInfoOrder, DamageType, Eoc, EocEffect, Mutation, MutationID, Spell, Time, Effect, EffectID, Item } from "@sosarciel-cdda/schema";
+import { BoolExpr, DamageInfoOrder, DamageType, EocEffect, Mutation, MutationID, Time, Effect, EffectID, Item } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
 import { GlobalHook, DataManager } from "@sosarciel-cdda/event";
 
@@ -15,7 +15,7 @@ import { GlobalHook, DataManager } from "@sosarciel-cdda/event";
  * @param cooldown 触发间隔
  */
 export function genTriggerEffect(dm:DataManager,effect:Effect,hook:GlobalHook,mode:"/2"|"-1"|"none",
-    eocEffects:EocEffect[],duration: (Time),condition?: (BoolObj),cooldown: (Time)=0){
+    eocEffects:EocEffect[],duration: (Time),condition?: (BoolExpr),cooldown: (Time)=0){
     if(typeof cooldown == "number") cooldown = `${cooldown} s`;
     effect.int_decay_remove = true;
 
@@ -82,8 +82,8 @@ export function genArmorMut(armor:Item){
         "ALLOWS_NATURAL_ATTACKS",//不会妨碍特殊攻击
         "PADDED"                ,//有内衬 即使没有任何特定材料是柔软的, 这种盔甲也算舒适。
     )
-    armor.weight=0;
-    armor.volume=0;
+    armor.weight='0 g';
+    armor.volume='0 ml';
     let fixname = armor.name;
     if(typeof fixname != "string")
         fixname = fixname!.str_sp??fixname!.str_pl??fixname!.str??fixname!.ctxt??fixname;
