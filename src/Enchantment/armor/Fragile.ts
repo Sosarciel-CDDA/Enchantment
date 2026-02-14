@@ -1,6 +1,6 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { JObject } from "@zwa73/utils";
+import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { auxEID, enchLvlID } from "../Common";
@@ -12,8 +12,7 @@ export const Fragile = {
     max:5,
     ctor:dm=>{
         const enchName = "脆弱";
-        const out:JObject[]=[];
-
+        const mainFlag = genMainFlag(Fragile.id,enchName);
         //被动效果
         const effid = EMDef.genEffectID(Fragile.id);
         const enchEffect:Effect = {
@@ -39,43 +38,44 @@ export const Fragile = {
                 }],
             }]
         }
-        out.push(enchEffect);
-
         //构造附魔集
         const enchData:EnchData={
             id:Fragile.id,
-            main:genMainFlag(Fragile.id,enchName),
+            main:mainFlag,
             intensity_effect: [enchEffect.id],
             ench_type:["armor"],
             lvl:[],
             add_effects:[{run_eocs:auxEID(BindCurseLvlFlagId,"add")}],
             remove_effects:[{run_eocs:auxEID(BindCurseLvlFlagId,"remove")}]
         };
-        out.push(enchData.main);
         //构造等级变体
-        for(let i=1;i<=Fragile.max;i++){
-            const subName = `${enchName} ${numToRoman(i)}`;
+        const lvlvar = range(Fragile.max).map(idx=>{
+            const lvl = idx+1;
+            const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
                 type:"json_flag",
-                id:enchLvlID(Fragile.id,i),
+                id:enchLvlID(Fragile.id,lvl),
                 name:subName,
-                info:genEnchInfo("bad",subName,`这件物品会增加 ${i*5}% 所受到的物理伤害`),
+                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*5}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
             //加入输出
-            out.push(ench);
             enchData.lvl.push({
                 ench,
-                weight:(Fragile.max+1-i)/4,
-                intensity:i,
+                weight:(Fragile.max-idx)/4,
+                intensity:lvl,
             });
-        }
+            return [ench]
+        }).drain().flat();
 
         //互斥附魔flag
         genBaseConfilcts(enchData);
         genEnchConfilcts(enchData,Protection);
-        dm.addData(out,"ench",Fragile.id);
+        dm.addData([
+            mainFlag,enchEffect,
+            ...lvlvar,
+        ],"ench",Fragile.id);
         return enchData;
     }
 } satisfies EnchCtor;
