@@ -1,7 +1,7 @@
-import { DamageType, DamageTypeID, Effect, EffectID, Eoc, Flag, FlagID, Spell } from "@sosarciel-cdda/schema";
-import { CON_SPELL_FLAG, EMDef, MAX_NUM } from "@src/EMDefine";
+import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
+import { CON_SPELL_FLAG, EMDef } from "@src/EMDefine";
 import { DataManager } from "@sosarciel-cdda/event";
-import { JObject } from "@zwa73/utils";
+import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
 import { EnchData } from "../EnchInterface";
 import { enchLvlID } from "../Common";
@@ -11,16 +11,14 @@ export const KnockbackEID = "Knockback";
 export const KnockbackMaxLvl = 5;
 export async function Knockback(dm:DataManager) {
     const enchName = "击退";
-    const out:JObject[]=[];
-
+    const mainFlag = genMainFlag(KnockbackEID,enchName);
     //构造附魔集
     const enchData:EnchData={
         id:KnockbackEID,
-        main:genMainFlag(KnockbackEID,enchName),
+        main:mainFlag,
         ench_type:["weapons"],
         lvl:[]
     };
-    out.push(enchData.main);
     //触发法术
     const tspell:Spell = {
         id:EMDef.genSpellID(`${KnockbackEID}_Trigger`),
@@ -37,33 +35,35 @@ export async function Knockback(dm:DataManager) {
         name:`${enchName} 附魔触发法术`,
         description: `${enchName} 附魔触发法术`
     }
-    out.push(tspell);
     //构造等级变体
-    for(let i=1;i<=KnockbackMaxLvl;i++){
-        const subName = `${enchName} ${numToRoman(i)}`;
+    const lvlvar = range(KnockbackMaxLvl).map(idx=>{
+        const lvl = idx+1;
+        const subName = `${enchName} ${numToRoman(lvl)}`;
         //变体ID
         const ench:Flag = {
             type:"json_flag",
-            id:enchLvlID(KnockbackEID,i),
+            id:enchLvlID(KnockbackEID,lvl),
             name:subName,
-            info:genEnchInfo('pink',subName,`这件物品可以造成 ${i} 点击退伤害`),
+            info:genEnchInfo('pink',subName,`这件物品可以造成 ${lvl} 点击退伤害`),
             item_prefix:genEnchPrefix('pink',subName),
         };
         //触发eoc
         const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
             {npc_location_variable:{context_val:`${KnockbackEID}_loc`}},
-            {u_cast_spell:{id:tspell.id,min_level:i-1},loc:{context_val:`${KnockbackEID}_loc`}}
+            {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${KnockbackEID}_loc`}}
         ])
         //加入输出
-        out.push(ench,teoc);
         enchData.lvl.push({
             ench,
-            weight:KnockbackMaxLvl+1-i,
-            point:i*2,
+            weight:KnockbackMaxLvl-idx,
+            point:lvl*2,
         });
-    }
+        return [ench,teoc]
+    }).drain().flat();
     //互斥附魔flag
     genBaseConfilcts(enchData);
-    dm.addData(out,"ench",KnockbackEID);
+    dm.addData([
+        mainFlag, tspell, ...lvlvar,
+    ],"ench",KnockbackEID);
     return enchData;
 }

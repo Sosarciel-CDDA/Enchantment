@@ -33,7 +33,7 @@ export function numToRoman(num:number) {
         I : 1   ,
     } as const;
     let roman = '';
-    for (let key in romanNumerals) {
+    for (const key in romanNumerals) {
         const fixk = key as (keyof typeof romanNumerals)
         while (num >= romanNumerals[fixk]) {
             roman += key;
@@ -45,7 +45,7 @@ export function numToRoman(num:number) {
 
 /**添加同附魔lvl变体的基础互斥 */
 export function genBaseConfilcts(enchData:EnchData){
-    enchData.lvl.forEach((lvlobj)=>{
+    enchData.lvl.forEach(lvlobj=>{
         const ench = lvlobj.ench;
         ench.conflicts = ench.conflicts??[];
         ench.conflicts.push(...enchData.lvl
@@ -55,7 +55,7 @@ export function genBaseConfilcts(enchData:EnchData){
 }
 /**根据ID与最大等级添加附魔互斥 */
 export function genEnchConfilcts(enchData:EnchData,baseID:string,maxLvl:number){
-    enchData.lvl.forEach((lvlobj)=>{
+    enchData.lvl.forEach(lvlobj=>{
         const ench = lvlobj.ench;
         ench.conflicts = ench.conflicts??[];
         for(let lvl=1;lvl<=maxLvl;lvl++)
