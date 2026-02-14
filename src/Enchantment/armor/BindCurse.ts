@@ -1,5 +1,4 @@
 import { Flag } from "@sosarciel-cdda/schema";
-import { JObject } from "@zwa73/utils";
 import { genEnchInfo, genEnchPrefix, genMainFlag } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { enchLvlID } from "../Common";
@@ -10,17 +9,15 @@ export const BindCurse = {
     max:1,
     ctor:dm=>{
         const enchName = "绑定诅咒";
-        const out:JObject[]=[];
-
+        const mainFlag = genMainFlag(BindCurse.id,enchName);
         //构造附魔集
         const enchData:EnchData={
             id:BindCurse.id,
-            main:genMainFlag(BindCurse.id,enchName),
+            main:mainFlag,
             ench_type:["armor"],
             lvl:[],
             is_curse:true
         };
-        out.push(enchData.main);
         //构造等级变体
         //变体ID
         const ench:Flag = {
@@ -31,7 +28,6 @@ export const BindCurse = {
             item_prefix:genEnchPrefix('bad',enchName),
         };
         //加入输出
-        out.push(ench);
         enchData.lvl.push({ench,
             add_effects:[
                 {npc_set_flag:"INTEGRATED"},
@@ -40,7 +36,7 @@ export const BindCurse = {
             remove_effects:[{npc_unset_flag:"INTEGRATED"}],
         });
 
-        dm.addData(out,"ench",BindCurse.id);
+        dm.addData([mainFlag,ench],"ench",BindCurse.id);
         return enchData;
     }
 } satisfies EnchCtor;
