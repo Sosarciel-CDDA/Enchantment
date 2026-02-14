@@ -1,4 +1,6 @@
-import { Effect, EffectID, EocEffect, Flag, FlagID, ItemSearchData } from "@sosarciel-cdda/schema";
+import { DataManager } from "@sosarciel-cdda/event";
+import { EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
+import { MPromise } from "@zwa73/utils";
 
 /**可用的附魔类型 列表 */
 export const VaildEnchTypeList = [
@@ -54,6 +56,7 @@ export type EnchData = {
      */
     is_curse?:boolean;
 }
+
 /**附魔的其中一个等级变体的数据 */
 export type EnchLvlData = {
     /**附魔标志 */
@@ -72,4 +75,13 @@ export type EnchLvlData = {
      * 未定义则为0  
      */
     point?:number;
+}
+
+/**附魔构造器 */
+export type EnchCtor = {
+    /**附魔id */
+    id  :string;
+    /**附魔最大值 */
+    max :number;
+    ctor:(dm:DataManager)=>MPromise<EnchData>;
 }

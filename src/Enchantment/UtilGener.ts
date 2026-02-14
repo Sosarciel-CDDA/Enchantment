@@ -1,7 +1,7 @@
 import { EMDef } from "@src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, Color, ColorList, EocEffect, Flag, FlagID } from "@sosarciel-cdda/schema";
-import { EnchData } from "./EnchInterface";
+import { EnchCtor, EnchData } from "./EnchInterface";
 import { enchLvlID } from "./Common";
 
 
@@ -53,13 +53,23 @@ export function genBaseConfilcts(enchData:EnchData){
             .map((subelvlobj)=>subelvlobj.ench.id))
     })
 }
+
 /**根据ID与最大等级添加附魔互斥 */
-export function genEnchConfilcts(enchData:EnchData,baseID:string,maxLvl:number){
+export function genEnchConfilctsO(enchData:EnchData,baseID:string,maxLvl:number){
     enchData.lvl.forEach(lvlobj=>{
         const ench = lvlobj.ench;
         ench.conflicts = ench.conflicts??[];
         for(let lvl=1;lvl<=maxLvl;lvl++)
             ench.conflicts.push(enchLvlID(baseID,lvl))
+    })
+}
+/**根据ID与最大等级添加附魔互斥 */
+export function genEnchConfilcts(base:EnchData,target:EnchCtor){
+    base.lvl.forEach(lvlobj=>{
+        const ench = lvlobj.ench;
+        ench.conflicts = ench.conflicts??[];
+        for(let lvl=1;lvl<=target.max;lvl++)
+            ench.conflicts.push(enchLvlID(target.id,lvl))
     })
 }
 
