@@ -8,7 +8,12 @@ const dataPath = path.join(process.cwd(),'data');
 const outPath = path.join(GAME_MOD_DIR,'CustomEnch');
 
 async function main(){
-    const EnchDm = new DataManager(dataPath,outPath,"CENCHEF",{enableMoveStatus:false});
+    const EnchDm = new DataManager({
+        dataPath:dataPath,
+        outPath:outPath,
+        emPrefix:"CENCHEF",
+        hookOpt:{enableMoveStatus:false}
+    });
     await createEnchantment(EnchDm);
     await createDamageType(EnchDm);
     await EnchDm.saveAllData();
