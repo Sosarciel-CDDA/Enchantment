@@ -6,7 +6,7 @@ import { enchLvlID } from "@/src/Enchantment/Define";
 
 export const AdditionalStrike = {
     id:"AdditionalStrike",
-    max:5,
+    max:2,
     ctor:dm=>{
         const name = "追加打击";
         //构造等级变体
