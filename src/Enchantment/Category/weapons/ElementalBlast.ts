@@ -56,7 +56,7 @@ export const ElementalBlast = {
                 {u_cast_spell:{id:tspell.id},loc:{context_val:`${ElementalBlast.id}_loc`}}
             ])
             return {
-                instance:{ ench, weight:1, point:2 },
+                instance:{ ench, weight:10, point:40 },
                 data:[tspell,ench,teoc]
             }
         });
@@ -65,7 +65,7 @@ export const ElementalBlast = {
         const enchData:EnchTypeData={
             id:ElementalBlast.id, instance,
             category:["weapons"],
-            conflicts:[ElementalBlast.id],
+            conflicts:["Elemental"],
         };
 
         dm.addData([...data],"ench",ElementalBlast.id);

@@ -29,11 +29,7 @@ export const AdditionalStrike = {
             ])
             //加入输出
             return {
-                instance:{
-                    ench,
-                    weight:AdditionalStrike.max-idx,
-                    point:lvl*2,
-                },
+                instance:{ ench, weight:[20,10][idx], point:[30,60][idx] },
                 data:[ench,teoc]
             }
         });

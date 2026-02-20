@@ -8,7 +8,7 @@ import { BindCurseLvlFlagId } from "./BindCurse";
 const dt = ["bash","cut","stab","bullet"] as const;
 export const Fragile = {
     id:"Fragile",
-    max:3,
+    max:2,
     ctor:dm=>{
         const enchName = "脆弱";
         //被动效果
@@ -36,14 +36,12 @@ export const Fragile = {
                 type:"json_flag",
                 id:enchLvlID(Fragile.id,lvl),
                 name:subName,
-                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
+                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
             return {
-                instance:{
-                    ench,
-                    weight:(Fragile.max-idx)/4,
-                    intensity:lvl,
+                instance:{ ench, intensity:lvl+1,
+                    weight:[10,5][idx],
                 },
                 data:[ench]
             }

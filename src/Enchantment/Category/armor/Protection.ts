@@ -8,7 +8,7 @@ import { enchLvlID } from "@/src/Enchantment/Define";
 const dt = ["bash","cut","stab","bullet"] as const;
 export const Protection = {
     id:"Protection",
-    max:3,
+    max:2,
     ctor:dm=>{
         const enchName = "保护";
         //被动效果
@@ -36,15 +36,13 @@ export const Protection = {
                 type:"json_flag",
                 id:enchLvlID(Protection.id,lvl),
                 name:subName,
-                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10}% 所受到的物理伤害`),
+                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('good',subName),
             };
             return {
-                instance:{
-                    ench,
-                    weight:Protection.max-idx,
-                    intensity:lvl,
-                    point:lvl*10,
+                instance:{ ench, intensity:lvl+1,
+                    weight:[20,10][idx],
+                    point :[20,40][idx],
                 },
                 data:[ench]
             }

@@ -45,11 +45,7 @@ export const Knockback = {
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
             return {
-                instance:{
-                    ench,
-                    weight:Knockback.max-idx,
-                    point:lvl*2,
-                },
+                instance:{ ench, weight:[20,10][idx], point:[20,40][idx] },
                 data:[ench,teoc]
             }
         });
