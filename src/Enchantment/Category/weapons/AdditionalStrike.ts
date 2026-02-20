@@ -18,8 +18,8 @@ export const AdditionalStrike = {
                 type:"json_flag",
                 id:enchLvlID(AdditionalStrike.id,lvl),
                 name:subName,
-                info:genEnchInfo('pink',subName,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
-                item_prefix:genEnchPrefix('pink',subName),
+                info:genEnchInfo('good',subName,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
+                item_prefix:genEnchPrefix('good',subName),
             };
             //触发eoc
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[

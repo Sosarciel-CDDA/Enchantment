@@ -1,0 +1,74 @@
+import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
+import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { Flag, JM, Spell } from "@sosarciel-cdda/schema";
+import { createEnchLvlData, genEnchInfo, genEnchPrefix, genWieldTrigger } from "../UtilGener";
+
+const list = [
+    ["heat"     ,"火焰"],
+    ["acid"     ,"酸液"],
+    ["electric" ,"电击"],
+    ["cold"     ,"寒冷"],
+]
+
+export const ElementalBlast = {
+    id:"ElementalBlast",
+    ctor:dm=>{
+        //构造变体
+        const {data,instance} = createEnchLvlData(list.length,idx=>{
+            const [elid,elname] = list[idx];
+            const enchname = `${elname}爆发`;
+
+            const dmgVar = `${ElementalBlast.id}_${elid}_dmg`;
+            const tspell:Spell = {
+                id:EMDef.genSpellID(`${ElementalBlast.id}_${elid}_Trigger`),
+                type:"SPELL",
+                flags:[...CON_SPELL_FLAG.filter(f=>f!="NO_EXPLOSION_SFX")],
+                min_damage:{math:[dmgVar]},
+                max_damage:{math:[dmgVar]},
+                damage_type:elid,
+                min_aoe:1,
+                max_aoe:1,
+                effect:"attack",
+                shape:"blast",
+                valid_targets:["hostile","ground"],
+                name:`${enchname} 附魔触发法术`,
+                description: `${enchname} 附魔触发法术`
+            }
+            //变体ID
+            const ench:Flag = {
+                type:"json_flag",
+                name: enchname,
+                id: EMDef.genFlagID(`${ElementalBlast.id}_${elid}_Ench`),
+                info:genEnchInfo('good',enchname,`这件物品可以额外造成 15% 的范围 ${elname} 伤害`),
+                item_prefix:genEnchPrefix('good',enchname),
+            };
+            const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
+                {
+                    u_run_inv_eocs:"all",
+                    search_data:[{wielded_only:true}],
+                    true_eocs:{
+                        eoc_type:"ACTIVATION",
+                        id:EMDef.genEocID(`${ElementalBlast.id}_${elid}_WieldTigger_Sub`),
+                        effect:[{math:[dmgVar,'=',`round(${JM.meleeDamage('n',"'ALL'")} * 0.2)`]}]
+                    }
+                },
+                {npc_location_variable:{context_val:`${ElementalBlast.id}_loc`}},
+                {u_cast_spell:{id:tspell.id},loc:{context_val:`${ElementalBlast.id}_loc`}}
+            ])
+            return {
+                instance:{ ench, weight:1, point:2 },
+                data:[tspell,ench,teoc]
+            }
+        });
+
+        //构造附魔集
+        const enchData:EnchTypeData={
+            id:ElementalBlast.id, instance,
+            category:["weapons"],
+            conflicts:[ElementalBlast.id],
+        };
+
+        dm.addData([...data],"ench",ElementalBlast.id);
+        return enchData;
+    }
+} satisfies EnchCtor;
