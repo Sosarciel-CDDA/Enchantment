@@ -19,7 +19,6 @@ export const BindCurse = {
         //构造附魔集
         const enchData:EnchData={
             id:BindCurse.id,
-            main:ench,
             ench_type:["armor"],
             lvl:[{
                 ench,

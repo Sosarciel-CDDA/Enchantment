@@ -1,6 +1,6 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@src/EMDefine";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman, createEnchLvlData } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { AdditionalStrike } from "./AdditionalStrike";
 import { enchLvlID } from "../Define";
@@ -12,7 +12,6 @@ export const Knockback = {
     max:2,
     ctor:dm=>{
         const enchName = "击退";
-        const main = genMainFlag(Knockback.id,enchName);
         //触发法术
         const tspell:Spell = {
             id:EMDef.genSpellID(`${Knockback.id}_Trigger`),
@@ -58,16 +57,13 @@ export const Knockback = {
 
         //构造附魔集
         const enchData:EnchData={
-            id:Knockback.id,
-            main, lvl,
+            id:Knockback.id, lvl,
             ench_type:["weapons"],
         };
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,AdditionalStrike);
-        dm.addData([
-            main, tspell, ...data,
-        ],"ench",Knockback.id);
+        dm.addData([tspell, ...data],"ench",Knockback.id);
         return enchData;
     }
 } satisfies EnchCtor;

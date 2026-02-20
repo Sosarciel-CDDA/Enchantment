@@ -1,6 +1,6 @@
 import { EMDef } from "@src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
-import { BoolExpr, Color, ColorList, EocEffect, Flag, FlagID } from "@sosarciel-cdda/schema";
+import { BoolExpr, Color, ColorList, EocEffect, FlagID } from "@sosarciel-cdda/schema";
 import { EnchCtor, EnchData, EnchLvlData } from "./EnchInterface";
 import { enchLvlID } from "./Define";
 import { JObject, range } from "@zwa73/utils";
@@ -63,15 +63,6 @@ export function genEnchConfilcts(base:EnchData,target:EnchCtor){
         for(let lvl=1;lvl<=(target.max??1);lvl++)
             ench.conflicts.push(enchLvlID(target.id,lvl))
     })
-}
-
-/**生成主附魔flag */
-export function genMainFlag(enchId:string,enchName:string):Flag{
-    return {
-        type:"json_flag",
-        id:EMDef.genFlagID(`${enchId}_Main_Ench`),
-        name:enchName,
-    }
 }
 
 /**生成附魔说明 */

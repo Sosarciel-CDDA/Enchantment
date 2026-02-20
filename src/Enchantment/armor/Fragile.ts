@@ -1,6 +1,6 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman, createEnchLvlData } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
@@ -12,7 +12,6 @@ export const Fragile = {
     max:3,
     ctor:dm=>{
         const enchName = "脆弱";
-        const main = genMainFlag(Fragile.id,enchName);
         //被动效果
         const effid = EMDef.genEffectID(Fragile.id);
         const eff:Effect = {
@@ -30,7 +29,7 @@ export const Fragile = {
         }
 
         //构造等级变体
-        const {lvl} = createEnchLvlData(Fragile.max,idx=>{
+        const {lvl,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -41,17 +40,19 @@ export const Fragile = {
                 info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
-            return {lvl:{
-                ench,
-                weight:(Fragile.max-idx)/4,
-                intensity:lvl,
-            }}
+            return {
+                lvl:{
+                    ench,
+                    weight:(Fragile.max-idx)/4,
+                    intensity:lvl,
+                },
+                data:[ench]
+            }
         });
 
         //构造附魔集
         const enchData:EnchData={
-            id:Fragile.id,
-            main, lvl,
+            id:Fragile.id, lvl,
             intensity_effect: [effid],
             ench_type:["armor"],
             //负面附魔会附带绑定诅咒
@@ -61,10 +62,7 @@ export const Fragile = {
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Protection);
-        dm.addData([
-            main,eff,
-            ...lvl.map(v=>v.ench),
-        ],"ench",Fragile.id);
+        dm.addData([eff,...data],"ench",Fragile.id);
         return enchData;
     }
 } satisfies EnchCtor;

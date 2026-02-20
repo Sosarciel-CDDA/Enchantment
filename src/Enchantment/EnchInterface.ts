@@ -35,8 +35,6 @@ export const EffectActiveCondSearchDataMap:Record<EffectActiveCond,ItemSearchDat
 export type EnchData = {
     /**id */
     id:string;
-    /**主要标志 */
-    main:Flag;
     /**冲突标识 */
     conflicts?:Flag[];
     /**附魔强度导致的效果 */

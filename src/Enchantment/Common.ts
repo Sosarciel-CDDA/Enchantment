@@ -165,9 +165,8 @@ function buildOperaEoc(enchDataList:EnchData[]){
     const removeeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
             EMDef.genActEoc(operaEID(lvlobj.ench,"remove"),[
-                //添加移除变体flag与主flag
+                //添加移除变体flag
                 {npc_unset_flag:lvlobj.ench.id},
-                {npc_unset_flag:data.main.id},
                 //添加附魔数据定义的副作用
                 ...data.remove_effects??[],
                 ...lvlobj.remove_effects??[],
