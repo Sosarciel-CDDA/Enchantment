@@ -2,8 +2,8 @@ import { Flag } from "@sosarciel-cdda/schema";
 import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
-import { enchLvlID } from "../Common";
 import { Knockback } from "./Knockback";
+import { enchLvlID } from "../Define";
 
 
 export const AdditionalStrike = {
@@ -28,12 +28,12 @@ export const AdditionalStrike = {
                 type:"json_flag",
                 id:enchLvlID(AdditionalStrike.id,lvl),
                 name:subName,
-                info:genEnchInfo('pink',subName,`这件物品可以造成 ${lvl} 点击退伤害`),
+                info:genEnchInfo('pink',subName,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
                 item_prefix:genEnchPrefix('pink',subName),
             };
             //触发eoc
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
-                {if:{not:{one_in_chance:lvl+1}},then:[
+                {if:{x_in_y_chance:{x:lvl+1,y:10}},then:[
                     {u_attack:"tec_none",forced_movecost:1}
                 ]}
             ])
