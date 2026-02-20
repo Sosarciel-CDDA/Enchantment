@@ -3,7 +3,7 @@ import { EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
-import { auxEID, enchLvlID } from "../Common";
+import { operaEID, enchLvlID } from "../Common";
 import { BindCurseLvlFlagId } from "./BindCurse";
 import { Protection } from "./Protection";
 
@@ -45,8 +45,8 @@ export const Fragile = {
             intensity_effect: [enchEffect.id],
             ench_type:["armor"],
             lvl:[],
-            add_effects:[{run_eocs:auxEID(BindCurseLvlFlagId,"add")}],
-            remove_effects:[{run_eocs:auxEID(BindCurseLvlFlagId,"remove")}]
+            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
+            remove_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"remove")}]
         };
         //构造等级变体
         const lvlvar = range(Fragile.max).map(idx=>{

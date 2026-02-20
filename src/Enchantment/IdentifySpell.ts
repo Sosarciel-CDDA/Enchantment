@@ -1,13 +1,13 @@
 import { EMDef } from "@src/EMDefine";
 import { JObject } from "@zwa73/utils";
 import { DataManager } from "@sosarciel-cdda/event";
-import { Eoc, Spell } from "@sosarciel-cdda/schema";
-import { ITEM_ENCH_TYPE, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_IDENTIFYED_FLAG_ID } from "./Common";
+import { Spell } from "@sosarciel-cdda/schema";
 import { EnchTypeSearchDataMap, VaildEnchTypeList } from "./EnchInterface";
+import { IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE } from "./Define";
 
 
 
-export async function identifySpell(dm:DataManager){
+export async function buildIdentifySpell(dm:DataManager){
     const out:JObject[] = [];
 
     //随机鉴定

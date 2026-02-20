@@ -1,11 +1,11 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { EnchData } from "./EnchInterface";
-import { debugItem } from "./DebugItem";
-import { flatEnchFlag, prepareProc } from "./Common";
+import { buildDebugItem } from "./DebugItem";
+import { flatEnchFlag, buildCommon } from "./Common";
 import { weaponsEnch } from "./weapons";
 import { armorEnch } from "./armor";
-import { identifySpell } from "./IdentifySpell";
-import { removeCurseSpell } from "./RemoveCurseSpell";
+import { buildIdentifySpell } from "./IdentifySpell";
+import { buildRemoveCurseSpell } from "./RemoveCurseSpell";
 
 
 
@@ -17,9 +17,9 @@ export async function createEnchantment(dm:DataManager){
     ]);
     //预处理并展开附魔flag
     const enchFlagList = await flatEnchFlag(enchDataList);
-    await prepareProc(dm,enchDataList);
+    await buildCommon(dm,enchDataList);
     //生成调试道具
-    await debugItem(dm,enchFlagList);
-    await identifySpell(dm);
-    await removeCurseSpell(dm);
+    await buildDebugItem(dm,enchFlagList);
+    await buildIdentifySpell(dm);
+    await buildRemoveCurseSpell(dm);
 }

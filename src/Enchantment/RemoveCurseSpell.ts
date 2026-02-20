@@ -1,12 +1,12 @@
 import { JObject } from "@zwa73/utils";
 import { DataManager } from "@sosarciel-cdda/event";
 import { AnyItemFlag, Spell } from "@sosarciel-cdda/schema";
-import { IS_CURSED_FLAG_ID, REMOVE_CURSE_EOC_ID } from "./Common";
 import { EMDef } from "@src/EMDefine";
+import { IS_CURSED_FLAG_ID, REMOVE_CURSE_EOC_ID } from "./Define";
 
 
 
-export async function removeCurseSpell(dm:DataManager){
+export async function buildRemoveCurseSpell(dm:DataManager){
     const out:JObject[] = [];
 
     //随机鉴定

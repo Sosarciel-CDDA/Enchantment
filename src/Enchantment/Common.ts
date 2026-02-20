@@ -2,68 +2,13 @@ import { DataManager } from "@sosarciel-cdda/event";
 import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchData, EnchTypeSearchDataMap, VaildEnchType, VaildEnchTypeList } from "./EnchInterface";
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@src/EMDefine";
-import { BoolExpr, EocEffect, EocID, Flag, FlagID, NumberExpr } from "@sosarciel-cdda/schema";
+import { BoolExpr, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
+import { COMPLETE_ENCH_INIT, ENCH_ONE_IN, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
 
 
-
-/**默认的最大附魔点数 */
-export const MAX_ENCH_POINT = 100;
-/**最大附魔尝试次数 */
-export const MAX_ENCH_COUNT = 10;
-/**附魔物品生成 one_in 概率 */
-export const ENCH_ONE_IN    = 2;
-
-/**表示物品完成附魔初始化 */
-export const COMPLETE_ENCH_INIT = "completedEnchInit";
-/**表示物品附魔点数的变量 */
-export const ENCH_POINT_CUR = "enchPoint";
-/**表述物品的最大附魔点数 需初始化 */
-export const ENCH_POINT_MAX = "enchPointMax";
-/**表示物品的附魔类型 需初始化 */
-export const ITEM_ENCH_TYPE = "itemEnchType";
-
-/**表示物品是被诅咒的 需鉴定 */
-export const IS_CURSED_FLAG_ID     = EMDef.genFlagID("IS_CURSED");
-/**表示物品是被鉴定过的 需鉴定 */
-export const IS_IDENTIFYED_FLAG_ID = EMDef.genFlagID("IS_IDENTIFYED");
-/**表示物品是含有附魔 需鉴定 */
-export const IS_ENCHED_FLAG_ID     = EMDef.genFlagID("IS_ENCHED");
-
-/**辅助eoc的id 对 beta 增减某个附魔 */
-export function auxEID(flag:Flag|FlagID,t:"add"|"remove"){
-    const id = typeof flag == "string" ? flag:flag.id;
-    return EMDef.genEocID(`${id}_${t}`);
-}
-/**附魔强度id */
-export function enchInsVar(ench:EnchData,t:"u"|"n"){
-    return `${t}_${ench.id}`;
-}
-/**附魔的等级flagID */
-export function enchLvlID(baseID:string,lvl:number){
-    return EMDef.genFlagID(`${baseID}_${lvl}_Ench`);
-}
-
-/**鉴定EocID  
- * 对 beta 进行鉴定  
- * 随机添加附魔  
- * u为角色 n为物品  
- */
-export const IDENTIFY_EOC_ID = EMDef.genEocID("IdentifyEnch");
-/**刷新附魔缓存EocID  
- * u为角色 n不存在  
- */
-export const UPGRADE_ENCH_CACHE_EOC_ID = EMDef.genEocID("UpgradeEnchCache");
-/**初始化附魔数据  
- * 在尝试添加附魔前需运行  
- * u为角色 n不存在  
- */
-export const INIT_ENCH_DATA_EOC_ID = EMDef.genEocID("InitEnchData");
-/**移除诅咒EocID */
-export const REMOVE_CURSE_EOC_ID = EMDef.genEocID("RemoveCurse");
-
-export async function prepareProc(dm:DataManager,enchDataList:EnchData[]) {
+export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
     const out:JObject[]=[
-        ... auxEoc(enchDataList)            ,//辅助eoc
+        ... operaEoc(enchDataList)            ,//辅助eoc
         ... identifyEoc(enchDataList)       ,//鉴定附魔Eoc
         ... removeCurseEoc(enchDataList)    ,//移除诅咒
         ... initEnchDataEoc(enchDataList)   ,//初始化附魔数据
@@ -120,10 +65,7 @@ export async function prepareProc(dm:DataManager,enchDataList:EnchData[]) {
                 {if:{math:[enchInsVar(ench,"u"),">=","1"]},
                 then:[
                     //{u_message:ench.id},
-                    ...eids.map((eid)=>{
-                        const eff:EocEffect={u_add_effect:eid,intensity:{math:[enchInsVar(ench,"u")]},duration:"PERMANENT"};
-                        return eff;
-                    })
+                    ...eids.map(eid=>({u_add_effect:eid,intensity:{math:[enchInsVar(ench,"u")]},duration:"PERMANENT"})satisfies EocEffect)
                 ],
                 else:[...eids.map((eid)=>{
                     const eff:EocEffect={u_lose_effect:eid};
@@ -174,12 +116,12 @@ export async function prepareProc(dm:DataManager,enchDataList:EnchData[]) {
 }
 
 /**生成辅助eoc */
-function auxEoc(enchDataList:EnchData[]){
+function operaEoc(enchDataList:EnchData[]){
     //辅助eoc
     //添加附魔子eoc
     const addeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
-            EMDef.genActEoc(auxEID(lvlobj.ench,"add"),[
+            EMDef.genActEoc(operaEID(lvlobj.ench,"add"),[
                 {npc_set_flag:lvlobj.ench.id},
                 {npc_set_flag:data.main.id},
                 ... (data.is_curse ? [{npc_set_flag:IS_CURSED_FLAG_ID}]:[]),
@@ -210,7 +152,7 @@ function auxEoc(enchDataList:EnchData[]){
     //移除附魔子eoc
     const removeeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
-            EMDef.genActEoc(auxEID(lvlobj.ench,"remove"),[
+            EMDef.genActEoc(operaEID(lvlobj.ench,"remove"),[
                 {npc_unset_flag:lvlobj.ench.id},
                 {npc_unset_flag:data.main.id},
                 ...data.remove_effects??[],
@@ -247,7 +189,7 @@ function identifyEoc(enchDataList:EnchData[]){
             if(ench.ench_type.includes(enchCate)){
                 //将辅助eoc加入表单
                 ench.lvl.forEach((lvlobj)=>
-                    wlist.push([auxEID(lvlobj.ench,"add"),{math:[`${(lvlobj.weight ?? 0)}`]}]))
+                    wlist.push([operaEID(lvlobj.ench,"add"),{math:[`${(lvlobj.weight ?? 0)}`]}]))
                 //将空eoc加入表单
                 wlist.push([noneEnchEoc.id,{math:[`${noneWeight}`]}]);
             }
@@ -298,7 +240,7 @@ function removeCurseEoc(enchDataList:EnchData[]){
     const removeCurseEffects:EocEffect[] = [{npc_unset_flag:IS_CURSED_FLAG_ID}];
     enchDataList.forEach((ench)=>{
         if(ench.is_curse==true)
-            removeCurseEffects.push(...ench.lvl.map(lvlobj=>({run_eocs:auxEID(lvlobj.ench,"remove")})))
+            removeCurseEffects.push(...ench.lvl.map(lvlobj=>({run_eocs:operaEID(lvlobj.ench,"remove")})))
     });
     const removeCurse = EMDef.genActEoc(REMOVE_CURSE_EOC_ID,[
         ...removeCurseEffects

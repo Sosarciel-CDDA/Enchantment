@@ -2,22 +2,22 @@ import { DataManager } from "@sosarciel-cdda/event";
 import { JObject } from "@zwa73/utils";
 import { EocID, Flag, Item } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { INIT_ENCH_DATA_EOC_ID, auxEID } from "./Common";
+import { INIT_ENCH_DATA_EOC_ID, operaEID } from "./Define";
 
 
 
-export async function debugItem(dm:DataManager,enchFlagList:Flag[]){
+export async function buildDebugItem(dm:DataManager,enchFlagList:Flag[]){
     const out:JObject[] = [];
     const NONEEocId = "EnchTestNone" as EocID;
 
     const enchTestList = [
         [EMDef.genActEoc("EnchTestAdd",[{run_eocs:INIT_ENCH_DATA_EOC_ID},{
-            run_eoc_selector:[...enchFlagList.map(ench=>auxEID(ench,"add")),NONEEocId],
+            run_eoc_selector:[...enchFlagList.map(ench=>operaEID(ench,"add")),NONEEocId],
             names:[...enchFlagList.map((ench)=>ench.name as string),"算了"],
             hide_failing:true
         }]),"添加附魔"],
         [EMDef.genActEoc("EnchTestRemove",[{
-            run_eoc_selector:[...enchFlagList.map(ench=>auxEID(ench,"remove")),NONEEocId],
+            run_eoc_selector:[...enchFlagList.map(ench=>operaEID(ench,"remove")),NONEEocId],
             names:[...enchFlagList.map((ench)=>ench.name as string),"算了"],
             hide_failing:true
         }]),"移除附魔"],
