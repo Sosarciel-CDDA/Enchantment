@@ -1,23 +1,19 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EnchTypeData } from "./EnchInterface";
 import { buildDebugItem } from "./DebugItem";
 import { buildCommon } from "./Common";
-import { buildWeaponsEnch } from "./weapons";
-import { buildArmorEnch } from "./armor";
 import { buildIdentifySpell } from "./IdentifySpell";
 import { buildRemoveCurseSpell } from "./RemoveCurseSpell";
+import { buildEnchCategory } from "./Category";
 
 
 
 
 export async function createEnchantment(dm:DataManager){
-    const enchDataList:EnchTypeData[] = await Promise.all([
-        ... await buildWeaponsEnch(dm)   ,
-        ... await buildArmorEnch(dm)     ,
-    ]);
+    const enchDataList = await buildEnchCategory(dm);
+
     //展开附魔等级变体flag
-    const enchFlagList = enchDataList.map(enchset=>
-        enchset.instance.map(lvlobj => lvlobj.ench)).flat();
+    const enchFlagList = enchDataList.flatMap(enchset=>
+        enchset.instance.map(ins => ins.ench));
 
     await buildCommon(dm,enchDataList);
     //生成调试道具

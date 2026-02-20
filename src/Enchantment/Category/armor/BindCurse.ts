@@ -1,7 +1,7 @@
 import { Flag } from "@sosarciel-cdda/schema";
-import { genEnchInfo, genEnchPrefix } from "../UtilGener";
-import { EnchCtor, EnchTypeData } from "../EnchInterface";
-import { enchLvlID } from "../Define";
+import { genEnchInfo, genEnchPrefix } from "@/src/Enchantment/UtilGener";
+import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { enchLvlID } from "@/src/Enchantment/Define";
 
 
 export const BindCurse = {

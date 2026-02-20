@@ -1,18 +1,18 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
-import { EnchCtor, EnchTypeData } from "../EnchInterface";
-import { enchLvlID } from "../Define";
-
+import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/UtilGener";
+import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { enchLvlID, operaEID } from "@/src/Enchantment/Define";
+import { BindCurseLvlFlagId } from "./BindCurse";
 
 const dt = ["bash","cut","stab","bullet"] as const;
-export const Protection = {
-    id:"Protection",
+export const Fragile = {
+    id:"Fragile",
     max:3,
     ctor:dm=>{
-        const enchName = "保护";
+        const enchName = "脆弱";
         //被动效果
-        const effid = EMDef.genEffectID(Protection.id);
+        const effid = EMDef.genEffectID(Fragile.id);
         const eff:Effect = {
             type:"effect_type",
             id:effid,
@@ -22,29 +22,28 @@ export const Protection = {
             enchantments:[{
                 condition:"ALWAYS",
                 incoming_damage_mod_post_absorbed:dt.map(type=>(
-                    {type,multiply:{math:[`u_effect_intensity('${effid}') * -0.1`]}}
+                    {type,multiply:{math:[`u_effect_intensity('${effid}') * 0.1`]}}
                 ))
             }]
         }
 
         //构造等级变体
-        const {instance,data} = createEnchLvlData(Protection.max,idx=>{
+        const {instance,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
                 type:"json_flag",
-                id:enchLvlID(Protection.id,lvl),
+                id:enchLvlID(Fragile.id,lvl),
                 name:subName,
-                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10}% 所受到的物理伤害`),
-                item_prefix:genEnchPrefix('good',subName),
+                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
+                item_prefix:genEnchPrefix('bad',subName),
             };
             return {
                 instance:{
                     ench,
-                    weight:Protection.max-idx,
+                    weight:(Fragile.max-idx)/4,
                     intensity:lvl,
-                    point:lvl*10,
                 },
                 data:[ench]
             }
@@ -52,14 +51,15 @@ export const Protection = {
 
         //构造附魔集
         const enchData:EnchTypeData={
-            id:Protection.id,
-            instance,
+            id:Fragile.id, instance,
             intensity_effect: [effid],
             ench_type:["armor"],
+            //负面附魔会附带绑定诅咒
+            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
             conflicts:["Protection"],
         };
 
-        dm.addData([eff,...data],"ench",Protection.id);
+        dm.addData([eff,...data],"ench",Fragile.id);
         return enchData;
     }
 } satisfies EnchCtor;
