@@ -15,7 +15,7 @@ export async function buildRemoveCurseSpell(dm:DataManager){
         {math:["_removeCurseSpellCount","=",`u_spell_level('${RemoveCurseSpellID}') / 4 + 1`]},
         {u_run_inv_eocs:"all",
         true_eocs:{
-            id:EMDef.genEocID("RandIdebtify_eoc_sub"),
+            id:EMDef.genEocID("RandRemoveCurse_eoc_sub"),
             eoc_type:"ACTIVATION",
             effect:[
                 {if:{and:[
@@ -75,5 +75,5 @@ export async function buildRemoveCurseSpell(dm:DataManager){
     }
     out.push(removeCurse,selRemove);
 
-    dm.addData(out,"IdentifySpell");
+    dm.addData(out,"RemoveCurseSpell");
 }

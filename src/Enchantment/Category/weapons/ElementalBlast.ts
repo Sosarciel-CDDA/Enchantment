@@ -39,7 +39,7 @@ export const ElementalBlast = {
                 type:"json_flag",
                 name: enchname,
                 id: EMDef.genFlagID(`${ElementalBlast.id}_${elid}_Ench`),
-                info:genEnchInfo('good',enchname,`这件物品可以额外造成 15% 的范围 ${elname} 伤害`),
+                info:genEnchInfo('good',enchname,`这件物品可以额外造成 20% 的范围 ${elname} 伤害`),
                 item_prefix:genEnchPrefix('good',enchname),
             };
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
