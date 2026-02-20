@@ -13,7 +13,7 @@ export const Fragile = {
     max:3,
     ctor:dm=>{
         const enchName = "脆弱";
-        const mainFlag = genMainFlag(Fragile.id,enchName);
+        const main = genMainFlag(Fragile.id,enchName);
         //被动效果
         const effid = EMDef.genEffectID(Fragile.id);
         const enchEffect:Effect = {
@@ -29,18 +29,9 @@ export const Fragile = {
                 ))
             }]
         }
-        //构造附魔集
-        const enchData:EnchData={
-            id:Fragile.id,
-            main:mainFlag,
-            intensity_effect: [enchEffect.id],
-            ench_type:["armor"],
-            lvl:[],
-            //负面附魔会附带绑定诅咒
-            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}]
-        };
+
         //构造等级变体
-        const lvlvar = range(Fragile.max).map(idx=>{
+        const lvl = range(Fragile.max).map(idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -51,21 +42,29 @@ export const Fragile = {
                 info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
-            //加入输出
-            enchData.lvl.push({
+            return {
                 ench,
                 weight:(Fragile.max-idx)/4,
                 intensity:lvl,
-            });
-            return [ench]
-        }).drain().flat();
+            }
+        }).drain();
+
+        //构造附魔集
+        const enchData:EnchData={
+            id:Fragile.id,
+            main, lvl,
+            intensity_effect: [enchEffect.id],
+            ench_type:["armor"],
+            //负面附魔会附带绑定诅咒
+            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}]
+        };
 
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Protection);
         dm.addData([
-            mainFlag,enchEffect,
-            ...lvlvar,
+            main,enchEffect,
+            ...lvl.map(v=>v.ench),
         ],"ench",Fragile.id);
         return enchData;
     }

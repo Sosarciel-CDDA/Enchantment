@@ -12,15 +12,8 @@ export const AdditionalStrike = {
     ctor:dm=>{
         const enchName = "追加打击";
         const mainFlag = genMainFlag(AdditionalStrike.id,enchName);
-        //构造附魔集
-        const enchData:EnchData={
-            id:AdditionalStrike.id,
-            main:mainFlag,
-            ench_type:["weapons"],
-            lvl:[]
-        };
         //构造等级变体
-        const lvlvar = range(AdditionalStrike.max).map(idx=>{
+        const lvldat = range(AdditionalStrike.max).map(idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -38,18 +31,27 @@ export const AdditionalStrike = {
                 ]}
             ])
             //加入输出
-            enchData.lvl.push({
-                ench,
-                weight:AdditionalStrike.max-idx,
-                point:lvl*2,
-            });
-            return [ench,teoc]
-        }).drain().flat();
+            return {
+                lvl:{
+                    ench,
+                    weight:AdditionalStrike.max-idx,
+                    point:lvl*2,
+                },
+                data:[ench,teoc]
+            }
+        }).drain();
+        //构造附魔集
+        const enchData:EnchData={
+            id:AdditionalStrike.id,
+            main:mainFlag,
+            ench_type:["weapons"],
+            lvl:lvldat.map(v=>v.lvl),
+        };
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Knockback);
         dm.addData([
-            mainFlag, ...lvlvar,
+            mainFlag, ...lvldat.map(v=>v.data).flat(),
         ],"ench",AdditionalStrike.id);
         return enchData;
     }

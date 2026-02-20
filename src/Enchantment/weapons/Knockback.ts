@@ -13,14 +13,7 @@ export const Knockback = {
     max:2,
     ctor:dm=>{
         const enchName = "击退";
-        const mainFlag = genMainFlag(Knockback.id,enchName);
-        //构造附魔集
-        const enchData:EnchData={
-            id:Knockback.id,
-            main:mainFlag,
-            ench_type:["weapons"],
-            lvl:[]
-        };
+        const main = genMainFlag(Knockback.id,enchName);
         //触发法术
         const tspell:Spell = {
             id:EMDef.genSpellID(`${Knockback.id}_Trigger`),
@@ -38,7 +31,7 @@ export const Knockback = {
             description: `${enchName} 附魔触发法术`
         }
         //构造等级变体
-        const lvlvar = range(Knockback.max).map(idx=>{
+        const lvldat = range(Knockback.max).map(idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -54,19 +47,27 @@ export const Knockback = {
                 {npc_location_variable:{context_val:`${Knockback.id}_loc`}},
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
-            //加入输出
-            enchData.lvl.push({
-                ench,
-                weight:Knockback.max-idx,
-                point:lvl*2,
-            });
-            return [ench,teoc]
-        }).drain().flat();
+            return {
+                lvl:{
+                    ench,
+                    weight:Knockback.max-idx,
+                    point:lvl*2,
+                },
+                data:[ench,teoc]
+            }
+        }).drain();
+
+        //构造附魔集
+        const enchData:EnchData={
+            id:Knockback.id,
+            main, lvl:lvldat.map(v=>v.lvl),
+            ench_type:["weapons"],
+        };
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,AdditionalStrike);
         dm.addData([
-            mainFlag, tspell, ...lvlvar,
+            main, tspell, ...lvldat.map(v=>v.data).flat(),
         ],"ench",Knockback.id);
         return enchData;
     }

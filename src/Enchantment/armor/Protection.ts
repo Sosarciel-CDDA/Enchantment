@@ -13,7 +13,7 @@ export const Protection = {
     max:3,
     ctor:dm=>{
         const enchName = "保护";
-        const mainFlag = genMainFlag(Protection.id,enchName);
+        const main = genMainFlag(Protection.id,enchName);
         //被动效果
         const effid = EMDef.genEffectID(Protection.id);
         const enchEffect:Effect = {
@@ -29,16 +29,9 @@ export const Protection = {
                 ))
             }]
         }
-        //构造附魔集
-        const enchData:EnchData={
-            id:Protection.id,
-            main:mainFlag,
-            intensity_effect: [enchEffect.id],
-            ench_type:["armor"],
-            lvl:[]
-        };
+
         //构造等级变体
-        const lvlvar = range(Protection.max).map(idx=>{
+        const lvl = range(Protection.max).map(idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -49,22 +42,28 @@ export const Protection = {
                 info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('good',subName),
             };
-            //加入输出
-            enchData.lvl.push({
+            return {
                 ench,
                 weight:Protection.max-idx,
                 intensity:lvl,
                 point:lvl*10,
-            });
-            return [ench];
-        }).drain().flat();
+            };
+        }).drain();
+
+        //构造附魔集
+        const enchData:EnchData={
+            id:Protection.id,
+            main, lvl,
+            intensity_effect: [enchEffect.id],
+            ench_type:["armor"],
+        };
 
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Fragile);
         dm.addData([
-            mainFlag,enchEffect,
-            ...lvlvar
+            main,enchEffect,
+            ...lvl.map(v=>v.ench),
         ],"ench",Protection.id);
         return enchData;
     }
