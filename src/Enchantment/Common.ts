@@ -36,12 +36,13 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
                     id:EMDef.genEocID(`SumEnchCache_${cond}`),
                     effect:[
                         //遍历附魔
-                        ...enchDataList.map(ench=>ench.lvl
+                        ...enchDataList.flatMap(ench=>ench.lvl
+                            //排除无强度或非当前条件触发
                             .filter(lvlobj=>lvlobj.intensity!=null && (ench.effect_active_cond==null || ench.effect_active_cond.includes(cond)))
                             .map(lvlobj=>({
                                 if:{npc_has_flag:lvlobj.ench.id},
                                 then:[{math:[enchInsVar(ench,"u"),"+=",`${lvlobj.intensity}`]}]
-                            }) satisfies EocEffect).filter(e=>e!==undefined)).flat()
+                            }) satisfies EocEffect))
                     ]
                 }
             }) satisfies EocEffect)
