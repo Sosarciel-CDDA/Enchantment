@@ -8,18 +8,17 @@ export const AdditionalStrike = {
     id:"AdditionalStrike",
     max:2,
     ctor:dm=>{
-        const name = "追加打击";
+        const enchName = "追加打击";
         //构造等级变体
         const {instance,data} = createEnchLvlData(AdditionalStrike.max,idx=>{
             const lvl = idx+1;
-            const subName = `${name} ${numToRoman(lvl)}`;
+            const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
-                type:"json_flag",
+                type:"json_flag", name,
                 id:enchLvlID(AdditionalStrike.id,lvl),
-                name:subName,
-                info:genEnchInfo('good',subName,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
-                item_prefix:genEnchPrefix('good',subName),
+                info:genEnchInfo('good',name,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
+                item_prefix:genEnchPrefix('good',name),
             };
             //触发eoc
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[

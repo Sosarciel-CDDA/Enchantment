@@ -7,13 +7,12 @@ import { enchLvlID } from "@/src/Enchantment/Define";
 export const BindCurse = {
     id:"BindCurse",
     ctor:dm=>{
-        const enchName = "绑定诅咒";
+        const name = "绑定诅咒";
         const ench:Flag = {
-            type:"json_flag",
+            type:"json_flag", name,
             id:BindCurseLvlFlagId,
-            name:enchName,
-            info:genEnchInfo("bad",enchName,`这件物品在移除诅咒前无法脱下`),
-            item_prefix:genEnchPrefix('bad',enchName),
+            info:genEnchInfo("bad",name,`这件物品在移除诅咒前无法脱下`),
+            item_prefix:genEnchPrefix('bad',name),
         };
 
         //构造附魔集

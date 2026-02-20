@@ -30,14 +30,13 @@ export const Knockback = {
         //构造等级变体
         const {instance,data} = createEnchLvlData(Knockback.max,idx=>{
             const lvl = idx+1;
-            const subName = `${enchName} ${numToRoman(lvl)}`;
+            const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
-                type:"json_flag",
+                type:"json_flag", name,
                 id:enchLvlID(Knockback.id,lvl),
-                name:subName,
-                info:genEnchInfo('pink',subName,`这件物品可以造成 ${lvl} 点击退伤害`),
-                item_prefix:genEnchPrefix('pink',subName),
+                info:genEnchInfo('pink',name,`这件物品可以造成 ${lvl} 点击退伤害`),
+                item_prefix:genEnchPrefix('pink',name),
             };
             //触发eoc
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[

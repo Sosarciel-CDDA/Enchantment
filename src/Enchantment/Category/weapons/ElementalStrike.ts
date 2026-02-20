@@ -16,7 +16,7 @@ export const ElementalStrike = {
         //构造变体
         const {data,instance} = createEnchLvlData(list.length,idx=>{
             const [elid,elname] = list[idx];
-            const enchname = `${elname}打击`;
+            const name = `${elname}打击`;
 
             const dmgVar = `${ElementalStrike.id}_${elid}_dmg`;
             const tspell:Spell = {
@@ -29,16 +29,15 @@ export const ElementalStrike = {
                 effect:"attack",
                 shape:"blast",
                 valid_targets:["hostile"],
-                name:`${enchname} 附魔触发法术`,
-                description: `${enchname} 附魔触发法术`
+                name:`${name} 附魔触发法术`,
+                description: `${name} 附魔触发法术`
             }
             //变体ID
             const ench:Flag = {
-                type:"json_flag",
-                name: enchname,
+                type:"json_flag", name,
                 id: EMDef.genFlagID(`${ElementalStrike.id}_${elid}_Ench`),
-                info:genEnchInfo('good',enchname,`这件物品可以额外造成 30% 的 ${elname} 伤害`),
-                item_prefix:genEnchPrefix('good',enchname),
+                info:genEnchInfo('good',name,`这件物品可以额外造成 30% 的 ${elname} 伤害`),
+                item_prefix:genEnchPrefix('good',name),
             };
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
                 {

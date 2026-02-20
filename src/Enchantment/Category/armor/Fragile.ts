@@ -30,14 +30,13 @@ export const Fragile = {
         //构造等级变体
         const {instance,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
-            const subName = `${enchName} ${numToRoman(lvl)}`;
+            const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
-                type:"json_flag",
+                type:"json_flag", name,
                 id:enchLvlID(Fragile.id,lvl),
-                name:subName,
-                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
-                item_prefix:genEnchPrefix('bad',subName),
+                info:genEnchInfo("bad",name,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
+                item_prefix:genEnchPrefix('bad',name),
             };
             return {
                 instance:{ ench, intensity:lvl+1,

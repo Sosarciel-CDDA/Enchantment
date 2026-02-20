@@ -30,14 +30,13 @@ export const Protection = {
         //构造等级变体
         const {instance,data} = createEnchLvlData(Protection.max,idx=>{
             const lvl = idx+1;
-            const subName = `${enchName} ${numToRoman(lvl)}`;
+            const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
             const ench:Flag = {
-                type:"json_flag",
+                type:"json_flag", name,
                 id:enchLvlID(Protection.id,lvl),
-                name:subName,
-                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
-                item_prefix:genEnchPrefix('good',subName),
+                info:genEnchInfo("good",name,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
+                item_prefix:genEnchPrefix('good',name),
             };
             return {
                 instance:{ ench, intensity:lvl+1,
