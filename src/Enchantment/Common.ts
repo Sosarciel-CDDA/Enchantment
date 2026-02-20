@@ -2,7 +2,7 @@ import { DataManager } from "@sosarciel-cdda/event";
 import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchData, EnchTypeSearchDataMap, VaildEnchType, VaildEnchTypeList } from "./EnchInterface";
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@src/EMDefine";
-import { BoolExpr, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
+import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
 import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_ONE_IN, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
 
 
@@ -21,11 +21,14 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
     out.push(clearCacheEoc);
 
     //刷新附魔缓存eoc
-    const upgradeEnchCache = EMDef.genActEoc(UPGRADE_ENCH_CACHE_EOC_ID,[
-        {run_eocs:clearCacheEoc.id},
-        //遍历生效条件
-        ...EffectActiveCondList.map((cond)=>{
-            const eff:EocEffect = {
+    const upgradeEnchCache:Eoc = {
+        id:UPGRADE_ENCH_CACHE_EOC_ID,
+        type:"effect_on_condition",
+        eoc_type:"ACTIVATION",
+        effect:[
+            {run_eocs:clearCacheEoc.id},
+            //遍历生效条件
+            ...EffectActiveCondList.map(cond=>({
                 u_run_inv_eocs:"all",
                 search_data:EffectActiveCondSearchDataMap[cond],
                 true_eocs:{
@@ -33,8 +36,8 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
                     id:EMDef.genEocID(`SumEnchCache_${cond}`),
                     effect:[
                         //遍历附魔
-                        ...enchDataList.map((ench)=>
-                            ench.lvl.map((lvlobj)=>{
+                        ...enchDataList.map(ench=>
+                            ench.lvl.map(lvlobj=>{
                                 const activeCond = ench.effect_active_cond??[...EffectActiveCondList];
                                 if(lvlobj.intensity!=null && activeCond.includes(cond)){
                                     const seff:EocEffect = {
@@ -43,23 +46,22 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
                                     }
                                     return seff;
                                 }
-                                return undefined as any as EocEffect;
-                            }).filter((e)=>e!==undefined)).flat()
+                            }).filter(e=>e!==undefined)).flat()
                     ]
                 }
-            }
-            return eff;
-        })
-    ],undefined,true);
+            }) satisfies EocEffect)
+        ]
+    };
     dm.addInvokeEoc("WearItem"    ,1,upgradeEnchCache);
     dm.addInvokeEoc("WieldItemRaw",1,upgradeEnchCache);
     dm.addInvokeEoc("SlowUpdate"  ,1,upgradeEnchCache);
     out.push(upgradeEnchCache);
 
     //根据缓存添加效果
-    enchDataList.forEach((ench)=>{
-        if(ench.intensity_effect!=null){
-            const eids = ench.intensity_effect;
+    enchDataList
+        .filter(ench=>ench.intensity_effect!=null)
+        .forEach(ench=>{
+            const eids = ench.intensity_effect!;
             //触发eoc
             const teoc = EMDef.genActEoc(`${ench.id}_AddEffect`,[
                 {if:{math:[enchInsVar(ench,"u"),">=","1"]},
@@ -67,26 +69,37 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
                     //{u_message:ench.id},
                     ...eids.map(eid=>({u_add_effect:eid,intensity:{math:[enchInsVar(ench,"u")]},duration:"PERMANENT"})satisfies EocEffect)
                 ],
-                else:[...eids.map((eid)=>{
-                    const eff:EocEffect={u_lose_effect:eid};
-                    return eff;
-                })]}
+                else:[...eids.map(eid=>({u_lose_effect:eid})satisfies EocEffect)]}
             ]);
             dm.addInvokeEoc("WearItem"    ,0,teoc);
             dm.addInvokeEoc("WieldItemRaw",0,teoc);
             dm.addInvokeEoc("SlowUpdate"  ,0,teoc);
             out.push(teoc);
-        }
-    })
+        });
 
     //鉴定使用的物品 物品为 beta
-    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[
-        {run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]},
-    ],{not:{npc_has_flag:IS_IDENTIFYED_FLAG_ID}})
+    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]}]);
     dm.addInvokeEoc("WearItem" ,2,identifyWear);
     dm.addInvokeEoc("WieldItem",2,identifyWear);
-    //dm.addInvokeEoc("EatItem"  ,2,identifyWear);
     out.push(identifyWear);
+
+    //初始化鉴定已穿着的物品
+    const identifyAuto:Eoc = {
+        type:"effect_on_condition",
+        eoc_type:"ACTIVATION",
+        id:EMDef.genEocID("IdentifyEnch_Init"),
+        effect:[
+            {run_eocs:[INIT_ENCH_DATA_EOC_ID]},
+            ...EffectActiveCondList.map(cond=>({
+                u_run_inv_eocs:"all",
+                search_data:EffectActiveCondSearchDataMap[cond],
+                true_eocs:[IDENTIFY_EOC_ID]
+            }) satisfies EocEffect)
+        ]
+    };
+    dm.addInvokeEoc("Init",2,identifyAuto);
+    out.push(identifyAuto);
+    //dm.addInvokeEoc("EatItem"  ,2,identifyWear);
 
     //共用flag
     //表示物品是被诅咒的flag
@@ -198,47 +211,50 @@ function buildIdentifyEoc(enchDataList:EnchData[]){
         ];
     }
 
-    //鉴定条件
-    const identifyCond:BoolExpr = {and:[
-        //物品没有完成鉴定flag
-        {not:{npc_has_flag:IS_IDENTIFYED_FLAG_ID}},
-        //物品完成初始化
-        {math:[`n_${COMPLETE_ENCH_INIT}`,"==",'1']},
-        //物品cate等同于附魔cate
-        {or:VaildEnchTypeList.map(cate=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, cate]}))},
-    ]}
-
     //附魔子eoc
     const subeocid = EMDef.genEocID('IdentifyEnch_each');
     //鉴定主EOC
-    const identifyEnchEoc = EMDef.genActEoc(IDENTIFY_EOC_ID,[
-        //如果命中附魔生成概率
-        {if:{one_in_chance:ENCH_ONE_IN},
-        then:[
-            {math:["_eachCount","=",`${MAX_ENCH_COUNT}`]},
-            //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
-            ...(VaildEnchTypeList.map(cate=>{
-                const eff:EocEffect = {run_eocs:{
-                    id:`${subeocid}_${cate}` as EocID,
-                    eoc_type:"ACTIVATION",
-                    effect:[
-                        {weighted_list_eocs:weightListMap[cate]},
-                        {math:["_eachCount","-=","1"]},
-                        {run_eocs:`${subeocid}_${cate}` as EocID}
-                    ],
-                    condition:{and:[
-                        {math:["_eachCount",">",`0`]},
-                        {math:[`n_${ENCH_POINT_CUR}`,"<",`n_${ENCH_POINT_MAX}`]}
-                    ]}
-                }}
-                return eff;
-            })),
-            {u_message:"你从一件装备上发现了附魔",type:"good"},
-            {npc_set_flag:IS_ENCHED_FLAG_ID},
+    const identifyEnchEoc:Eoc = {
+        id:IDENTIFY_EOC_ID,
+        type:"effect_on_condition",
+        eoc_type:"ACTIVATION",
+        condition:{and:[
+            //物品没有完成鉴定flag
+            {not:{npc_has_flag:IS_IDENTIFYED_FLAG_ID}},
+            //物品完成初始化
+            {math:[`n_${COMPLETE_ENCH_INIT}`,"==",'1']},
+            //物品cate等同于任意一个附魔cate
+            {or:VaildEnchTypeList.map(cate=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, cate]}))},
         ]},
-        {u_message:"一件装备的详细属性被揭示了",type:"good"},
-        {npc_set_flag:IS_IDENTIFYED_FLAG_ID},
-    ],identifyCond,true);
+        effect:[
+            //如果命中附魔生成概率
+            {if:{one_in_chance:ENCH_ONE_IN},
+            then:[
+                {math:["_eachCount","=",`${MAX_ENCH_COUNT}`]},
+                //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
+                ...(VaildEnchTypeList.map(cate=>{
+                    const eff:EocEffect = {run_eocs:{
+                        id:`${subeocid}_${cate}` as EocID,
+                        eoc_type:"ACTIVATION",
+                        effect:[
+                            {weighted_list_eocs:weightListMap[cate]},
+                            {math:["_eachCount","-=","1"]},
+                            {run_eocs:`${subeocid}_${cate}` as EocID}
+                        ],
+                        condition:{and:[
+                            {math:["_eachCount",">",`0`]},
+                            {math:[`n_${ENCH_POINT_CUR}`,"<",`n_${ENCH_POINT_MAX}`]}
+                        ]}
+                    }}
+                    return eff;
+                })),
+                {u_message:"你从一件装备上发现了附魔",type:"good"},
+                {npc_set_flag:IS_ENCHED_FLAG_ID},
+            ]},
+            {u_message:"一件装备的详细属性被揭示了",type:"good"},
+            {npc_set_flag:IS_IDENTIFYED_FLAG_ID},
+        ]
+    }
 
     return [identifyEnchEoc,noneEnchEoc];
 }
