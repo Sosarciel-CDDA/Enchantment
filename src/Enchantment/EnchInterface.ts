@@ -3,15 +3,15 @@ import { EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schem
 import { MPromise } from "@zwa73/utils";
 
 /**可用的附魔类型 列表 */
-export const VaildEnchTypeList = [
+export const VaildEnchCategoryList = [
     "weapons"   ,
     "armor"     ,
     //"food"      ,
 ] as const;
 /**可用的附魔类型 */
-export type VaildEnchType = typeof VaildEnchTypeList[number];
+export type VaildEnchCategory = typeof VaildEnchCategoryList[number];
 /**附魔类型映射 */
-export const EnchTypeSearchDataMap:Record<VaildEnchType,ItemSearchData[]> = {
+export const EnchTypeSearchDataMap:Record<VaildEnchCategory,ItemSearchData[]> = {
     weapons :[{category:"weapons"}] ,
     armor   :[{category:"armor"}]   ,
     //food    :[{flags:["EATEN_HOT"]},{flags:["SMOKABLE"]}],
@@ -44,7 +44,7 @@ export type EnchTypeData = {
     /**强度生效方式 undefined时为全部 */
     effect_active_cond?:EffectActiveCond[];
     /**限制类型 */
-    ench_type:VaildEnchType[];
+    category:VaildEnchCategory[];
     /**强度变体数据集 */
     instance:EnchInsData[];
     /**添加时会执行的effect */

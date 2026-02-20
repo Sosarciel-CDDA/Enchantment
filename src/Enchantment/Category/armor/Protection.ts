@@ -55,7 +55,7 @@ export const Protection = {
             id:Protection.id,
             instance,
             intensity_effect: [effid],
-            ench_type:["armor"],
+            category:["armor"],
             conflicts:["Protection"],
         };
 

@@ -1,5 +1,5 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchTypeData, EnchTypeSearchDataMap, VaildEnchType, VaildEnchTypeList } from "./EnchInterface";
+import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchTypeData, EnchTypeSearchDataMap, VaildEnchCategory, VaildEnchCategoryList } from "./EnchInterface";
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
 import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
@@ -145,7 +145,7 @@ function buildOperaEoc(enchDataList:EnchTypeData[]){
                 //排除冲突
                 {not:getEnchConflictsExpr(data)},
                 //物品cate应被附魔cate包含
-                {or:data.ench_type.map(t=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, t]}))},
+                {or:data.category.map(t=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, t]}))},
                 //排除自体护甲与生化武器
                 {not:{or:[
                     {npc_has_flag:"BIONIC_WEAPON"   },//生化武器
@@ -178,24 +178,27 @@ function buildOperaEoc(enchDataList:EnchTypeData[]){
 
 /**生成鉴定eoc */
 function buildIdentifyEoc(enchDataList:EnchTypeData[]){
-    //总附魔权重
-    const weightSum = enchDataList.reduce((enchsum,ench)=>
-        enchsum + ench.instance.reduce((sum,ins)=>
-            (ins.weight ?? 0) + sum, 0), 0);
-    //空附魔权重
-    const noneWeight  = weightSum/ENCH_EMPTY_IN;
     //空附魔Eoc
     const noneEnchEoc = EMDef.genActEoc("NoneEnch",[]);
 
     //根据随机权重生成 附魔类别 : weight_list_eoc数据 表单
-    const weightListMap:Record<VaildEnchType,[EocID,NumberExpr][]> = {} as any;
+    const weightListMap:Record<VaildEnchCategory,[EocID,NumberExpr][]> = {} as any;
     //遍历附魔类别与附魔数据表
-    for(const cate of VaildEnchTypeList){
+    for(const cate of VaildEnchCategoryList){
+        //cate下总附魔权重
+        const weightSum = enchDataList
+            .filter(v=>v.category.includes(cate))
+            .reduce((enchsum,ench)=>
+                enchsum + ench.instance.reduce((sum,ins)=>
+                    (ins.weight ?? 0) + sum, 0), 0);
+
+        //空附魔权重
+        const noneWeight  = weightSum/ENCH_EMPTY_IN;
         //将空eoc加入表单
         weightListMap[cate] = [
             [noneEnchEoc.id,{math:[`${noneWeight}`]}],
             ... enchDataList //遍历所有附魔
-                .filter(ench=>ench.ench_type.includes(cate))
+                .filter(ench=>ench.category.includes(cate))
                 .flatMap(ench=>ench.instance //将辅助eoc加入表单
                     .filter(ins=>(ins.weight??0)>0)
                     .map(ins=>[operaEID(ins.ench,"add"),{math:[`${(ins.weight ?? 0)}`]}] satisfies [EocID,NumberExpr]))
@@ -215,7 +218,7 @@ function buildIdentifyEoc(enchDataList:EnchTypeData[]){
             //物品完成初始化
             {math:[`n_${COMPLETE_ENCH_INIT}`,"==",'1']},
             //物品cate等同于任意一个附魔cate
-            {or:VaildEnchTypeList.map(cate=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, cate]}))},
+            {or:VaildEnchCategoryList.map(cate=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, cate]}))},
         ]},
         effect:[
             //如果命中附魔生成概率
@@ -223,7 +226,7 @@ function buildIdentifyEoc(enchDataList:EnchTypeData[]){
             then:[
                 {math:["_eachCount","=",`${MAX_ENCH_COUNT}`]},
                 //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
-                ...(VaildEnchTypeList.map(cate=>{
+                ...(VaildEnchCategoryList.map(cate=>{
                     const eff:EocEffect = {run_eocs:{
                         id:`${subeocid}_${cate}` as EocID,
                         eoc_type:"ACTIVATION",
@@ -265,7 +268,7 @@ function buildRemoveCurseEoc(enchDataList:EnchTypeData[]){
 function buildInitEnchDataEoc(enchDataList:EnchTypeData[]){
     //依靠 EnchTypeSearchDataMap 内的 cate->search_data 映射
     //将 cate 字符串烘焙至 n_ITEM_ENCH_TYPE 以便处理
-    const initeffects:EocEffect[] = VaildEnchTypeList.map(t=>({
+    const initeffects:EocEffect[] = VaildEnchCategoryList.map(t=>({
         u_run_inv_eocs:"all",
         search_data:[...EnchTypeSearchDataMap[t]],
         true_eocs:{

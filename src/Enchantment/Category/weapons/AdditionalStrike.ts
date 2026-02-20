@@ -40,7 +40,7 @@ export const AdditionalStrike = {
         //构造附魔集
         const enchData:EnchTypeData={
             id:AdditionalStrike.id, instance,
-            ench_type:["weapons"],
+            category:["weapons"],
             conflicts:["AttackPosition"],
         };
 
