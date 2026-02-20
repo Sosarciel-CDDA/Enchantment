@@ -23,9 +23,9 @@ const customSetupEoc:Eoc = {
     type:"effect_on_condition",
     eoc_type:"ACTIVATION",
     effect:[
-        { math:[ENCH_CHANGE    ,'=',JM.numInput(`'ENCH_CHANGE 附魔物品的生成几率, 100为100%'`,10)] },
-        { math:[MAX_ENCH_POINT ,'=',JM.numInput("'MAX_ENCH_POINT 附魔物品生成时的最大点数, 越高则附魔强度越高'",100)] },
-        { math:[MAX_ENCH_COUNT ,'=',JM.numInput(`'MAX_ENCH_COUNT 附魔物品生成时的尝试次数, 越高越容易充满 MAX_ENCH_POINT'`,10)] },
+        { math:[ENCH_CHANGE    ,'=',JM.numInput(`'${ENCH_CHANGE} 附魔物品的生成几率, 100为100%'`,10)] },
+        { math:[MAX_ENCH_POINT ,'=',JM.numInput(`'${MAX_ENCH_POINT} 附魔物品生成时的最大点数, 越高则附魔强度越高'`,100)] },
+        { math:[MAX_ENCH_COUNT ,'=',JM.numInput(`'${MAX_ENCH_COUNT} 附魔物品生成时的尝试次数, 越高越容易充满 ${MAX_ENCH_POINT}'`,10)] },
     ]
 }
 const setMutId = EMDef.genMutationID(`Setup`);
