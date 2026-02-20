@@ -3,15 +3,15 @@ import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchData, EnchType
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@src/EMDefine";
 import { BoolExpr, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_ONE_IN, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
+import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_ONE_IN, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
 
 
 export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
     const out:JObject[]=[
-        ... operaEoc(enchDataList)            ,//辅助eoc
-        ... identifyEoc(enchDataList)       ,//鉴定附魔Eoc
-        ... removeCurseEoc(enchDataList)    ,//移除诅咒
-        ... initEnchDataEoc(enchDataList)   ,//初始化附魔数据
+        ... buildOperaEoc(enchDataList)          ,//辅助eoc
+        ... buildIdentifyEoc(enchDataList)       ,//鉴定附魔Eoc
+        ... buildRemoveCurseEoc(enchDataList)    ,//移除诅咒
+        ... buildInitEnchDataEoc(enchDataList)   ,//初始化附魔数据
     ];
 
     //清理附魔缓存
@@ -116,29 +116,32 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
 }
 
 /**生成辅助eoc */
-function operaEoc(enchDataList:EnchData[]){
+function buildOperaEoc(enchDataList:EnchData[]){
     //辅助eoc
     //添加附魔子eoc
     const addeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
             EMDef.genActEoc(operaEID(lvlobj.ench,"add"),[
+                //添加等级变体flag与主flag
                 {npc_set_flag:lvlobj.ench.id},
                 {npc_set_flag:data.main.id},
+                //如果是诅咒的则加上诅咒flag
                 ... (data.is_curse ? [{npc_set_flag:IS_CURSED_FLAG_ID}]:[]),
+                //增加附魔点数
                 {math:[`n_${ENCH_POINT_CUR}`,"+=",`${lvlobj.point}`]},
+                //添加附魔数据定义的副作用
                 ...data.add_effects??[],
                 ...lvlobj.add_effects??[],
             ],{and:[
                 //排除冲突
                 {not:{or:[
-                    ...(lvlobj.ench.conflicts??[])
-                        .map((id)=>({npc_has_flag:id})),
+                    //排除任何冲突flag
+                    ...(lvlobj.ench.conflicts??[]).map(id=>({npc_has_flag:id})),
+                    //排除自身
                     {npc_has_flag:lvlobj.ench.id},
                 ]}},
-                //符合类型
-                {or:data.ench_type.map(t=>({
-                    compare_string:[{npc_val:ITEM_ENCH_TYPE}, t]
-                }))},
+                //物品cate应被附魔cate包含
+                {or:data.ench_type.map(t=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, t]}))},
                 //排除自体护甲与生化武器
                 {not:{or:[
                     {npc_has_flag:"BIONIC_WEAPON"   },//生化武器
@@ -149,12 +152,14 @@ function operaEoc(enchDataList:EnchData[]){
     ).flat();
 
     //{not:{npc_has_flag:enchset.main.id}}
-    //移除附魔子eoc
+    //移除附魔子eoc 不会移除 被诅咒 IS_CURSED_FLAG_ID flag
     const removeeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
             EMDef.genActEoc(operaEID(lvlobj.ench,"remove"),[
+                //添加移除变体flag与主flag
                 {npc_unset_flag:lvlobj.ench.id},
                 {npc_unset_flag:data.main.id},
+                //添加附魔数据定义的副作用
                 ...data.remove_effects??[],
                 ...lvlobj.remove_effects??[],
             ],{npc_has_flag:lvlobj.ench.id},true)
@@ -168,14 +173,14 @@ function operaEoc(enchDataList:EnchData[]){
 }
 
 /**生成鉴定eoc */
-function identifyEoc(enchDataList:EnchData[]){
+function buildIdentifyEoc(enchDataList:EnchData[]){
     //总附魔权重
     const weightSum = enchDataList.reduce((enchsum,ench)=>
         enchsum + ench.lvl.reduce((lvlobjsum,lvlobj)=>
             (lvlobj.weight ?? 0) + lvlobjsum, 0), 0);
     //空附魔权重
-    const noneWeight   = weightSum/10;
-    //空附魔
+    const noneWeight  = weightSum/ENCH_EMPTY_IN;
+    //空附魔Eoc
     const noneEnchEoc = EMDef.genActEoc("NoneEnch",[]);
 
     //根据随机权重生成 附魔类别 : weight_list_eoc数据 表单
@@ -188,7 +193,7 @@ function identifyEoc(enchDataList:EnchData[]){
             const wlist = weightListMap[enchCate];
             if(ench.ench_type.includes(enchCate)){
                 //将辅助eoc加入表单
-                ench.lvl.forEach((lvlobj)=>
+                ench.lvl.forEach(lvlobj=>
                     wlist.push([operaEID(lvlobj.ench,"add"),{math:[`${(lvlobj.weight ?? 0)}`]}]))
                 //将空eoc加入表单
                 wlist.push([noneEnchEoc.id,{math:[`${noneWeight}`]}]);
@@ -198,17 +203,24 @@ function identifyEoc(enchDataList:EnchData[]){
 
     //鉴定条件
     const identifyCond:BoolExpr = {and:[
+        //物品没有完成鉴定flag
         {not:{npc_has_flag:IS_IDENTIFYED_FLAG_ID}},
+        //物品完成初始化
         {math:[`n_${COMPLETE_ENCH_INIT}`,"==",'1']},
+        //物品cate等同于附魔cate
         {or:VaildEnchTypeList.map(cate=>({compare_string:[{npc_val:ITEM_ENCH_TYPE}, cate]}))},
     ]}
+
+    //附魔子eoc
     const subeocid = EMDef.genEocID('IdentifyEnch_each');
     //鉴定主EOC
     const identifyEnchEoc = EMDef.genActEoc(IDENTIFY_EOC_ID,[
+        //如果命中附魔生成概率
         {if:{one_in_chance:ENCH_ONE_IN},
         then:[
             {math:["_eachCount","=",`${MAX_ENCH_COUNT}`]},
-            ...(VaildEnchTypeList.map((cate)=>{
+            //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
+            ...(VaildEnchTypeList.map(cate=>{
                 const eff:EocEffect = {run_eocs:{
                     id:`${subeocid}_${cate}` as EocID,
                     eoc_type:"ACTIVATION",
@@ -235,21 +247,20 @@ function identifyEoc(enchDataList:EnchData[]){
 }
 
 /**生成移除诅咒eoc */
-function removeCurseEoc(enchDataList:EnchData[]){
-    //移除指定诅咒
+function buildRemoveCurseEoc(enchDataList:EnchData[]){
+    //移除诅咒flag 同时遍历附魔list 移除所有 is_curse 的 附魔
     const removeCurseEffects:EocEffect[] = [{npc_unset_flag:IS_CURSED_FLAG_ID}];
     enchDataList.forEach((ench)=>{
         if(ench.is_curse==true)
             removeCurseEffects.push(...ench.lvl.map(lvlobj=>({run_eocs:operaEID(lvlobj.ench,"remove")})))
     });
-    const removeCurse = EMDef.genActEoc(REMOVE_CURSE_EOC_ID,[
-        ...removeCurseEffects
-    ],undefined,true);
+    const removeCurse = EMDef.genActEoc(REMOVE_CURSE_EOC_ID,[...removeCurseEffects],undefined,true);
     return [removeCurse];
 }
 /**生成初始化附魔数据eoc */
-function initEnchDataEoc(enchDataList:EnchData[]){
-    //初始化附魔数据
+function buildInitEnchDataEoc(enchDataList:EnchData[]){
+    //依靠 EnchTypeSearchDataMap 内的 cate->search_data 映射
+    //将 cate 字符串烘焙至 n_ITEM_ENCH_TYPE 以便处理
     const initeffects:EocEffect[] = VaildEnchTypeList.map(t=>({
         u_run_inv_eocs:"all",
         search_data:[...EnchTypeSearchDataMap[t]],
@@ -270,6 +281,3 @@ function initEnchDataEoc(enchDataList:EnchData[]){
     return [initEnchData];
 }
 
-/**展开附魔等级变体flag */
-export const flatEnchFlag = (enchDataList:EnchData[]) =>
-    enchDataList.map(enchset=>enchset.lvl.map(lvlobj => lvlobj.ench)).flat();

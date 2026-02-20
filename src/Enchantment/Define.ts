@@ -9,6 +9,8 @@ export const MAX_ENCH_POINT = 100;
 export const MAX_ENCH_COUNT = 10;
 /**附魔物品生成 one_in 概率 */
 export const ENCH_ONE_IN    = 2;
+/**空附魔 one_in 概率 */
+export const ENCH_EMPTY_IN  = 10;
 
 /**表示物品完成附魔初始化
  * 变量名

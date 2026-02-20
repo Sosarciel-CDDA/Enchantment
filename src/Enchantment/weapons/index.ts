@@ -4,7 +4,7 @@ import { AdditionalStrike } from "./AdditionalStrike";
 
 
 
-export async function weaponsEnch(dm:DataManager){
+export async function buildWeaponsEnch(dm:DataManager){
     return await Promise.all([
         await Knockback.ctor(dm),
         await AdditionalStrike.ctor(dm),

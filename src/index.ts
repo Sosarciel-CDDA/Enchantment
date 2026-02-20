@@ -1,7 +1,7 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import * as path from 'path';
-import { createDamageType } from "./DamageType";
-import { createEnchantment } from "./Enchantment";
+import { createDamageType as buildDamageType } from "./DamageType";
+import { createEnchantment as buildEnchantment } from "./Enchantment";
 import { GAME_MOD_DIR } from "@sosarciel-cdda/schema";
 
 const dataPath = path.join(process.cwd(),'data');
@@ -14,8 +14,8 @@ async function main(){
         emPrefix:"CENCHEF",
         hookOpt:{enableMoveStatus:false}
     });
-    await createEnchantment(EnchDm);
-    await createDamageType(EnchDm);
+    await buildEnchantment(EnchDm);
+    await buildDamageType(EnchDm);
     await EnchDm.saveAllData();
 }
 main();

@@ -5,7 +5,7 @@ import { Fragile } from "./Fragile";
 
 
 
-export async function armorEnch(dm:DataManager){
+export async function buildArmorEnch(dm:DataManager){
     return await Promise.all([
         await Protection.ctor(dm),
         await Fragile.ctor(dm)   ,
