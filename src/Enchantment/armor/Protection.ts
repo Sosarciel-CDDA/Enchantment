@@ -7,9 +7,10 @@ import { enchLvlID } from "../Define";
 import { Fragile } from "./Fragile";
 
 
+const dt = ["bash","cut","stab","bullet"] as const;
 export const Protection = {
     id:"Protection",
-    max:5,
+    max:3,
     ctor:dm=>{
         const enchName = "保护";
         const mainFlag = genMainFlag(Protection.id,enchName);
@@ -19,23 +20,13 @@ export const Protection = {
             type:"effect_type",
             id:effid,
             name:[`${enchName} 附魔效果`],
-            desc:[`${enchName} 附魔正在生效 每层效果提供 5% 物理伤害减免`],
-            max_intensity:15,
+            desc:[`${enchName} 附魔正在生效 每层效果提供 10% 物理伤害减免`],
+            max_intensity:7,
             enchantments:[{
                 condition:"ALWAYS",
-                incoming_damage_mod_post_absorbed:[{
-                    type:"bash",
-                    multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
-                },{
-                    type:"cut",
-                    multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
-                },{
-                    type:"stab",
-                    multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
-                },{
-                    type:"bullet",
-                    multiply:{math:[`u_effect_intensity('${effid}') * -0.05`]},
-                }]
+                incoming_damage_mod_post_absorbed:dt.map(type=>(
+                    {type,multiply:{math:[`u_effect_intensity('${effid}') * -0.1`]}}
+                ))
             }]
         }
         //构造附魔集
@@ -55,7 +46,7 @@ export const Protection = {
                 type:"json_flag",
                 id:enchLvlID(Protection.id,lvl),
                 name:subName,
-                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*5}% 所受到的物理伤害`),
+                info:genEnchInfo("good",subName,`这件物品可以降低 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('good',subName),
             };
             //加入输出

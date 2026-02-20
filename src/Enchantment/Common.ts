@@ -124,7 +124,6 @@ function buildOperaEoc(enchDataList:EnchData[]){
             EMDef.genActEoc(operaEID(lvlobj.ench,"add"),[
                 //添加等级变体flag与主flag
                 {npc_set_flag:lvlobj.ench.id},
-                {npc_set_flag:data.main.id},
                 //如果是诅咒的则加上诅咒flag
                 ... (data.is_curse ? [{npc_set_flag:IS_CURSED_FLAG_ID}]:[]),
                 //增加附魔点数
@@ -186,20 +185,17 @@ function buildIdentifyEoc(enchDataList:EnchData[]){
 
     //根据随机权重生成 附魔类别 : weight_list_eoc数据 表单
     const weightListMap:Record<VaildEnchType,[EocID,NumberExpr][]> = {} as any;
-    //初始化表单数组
-    VaildEnchTypeList.forEach(et=>weightListMap[et]=[]);
     //遍历附魔类别与附魔数据表
-    for(const enchCate of VaildEnchTypeList){
-        enchDataList.forEach((ench)=>{
-            const wlist = weightListMap[enchCate];
-            if(ench.ench_type.includes(enchCate)){
-                //将辅助eoc加入表单
-                ench.lvl.forEach(lvlobj=>
-                    wlist.push([operaEID(lvlobj.ench,"add"),{math:[`${(lvlobj.weight ?? 0)}`]}]))
-                //将空eoc加入表单
-                wlist.push([noneEnchEoc.id,{math:[`${noneWeight}`]}]);
-            }
-        })
+    for(const cate of VaildEnchTypeList){
+        //将空eoc加入表单
+        weightListMap[cate] = [
+            [noneEnchEoc.id,{math:[`${noneWeight}`]}],
+            ... enchDataList //遍历所有附魔
+                .filter(ench=>ench.ench_type.includes(cate))
+                .flatMap(ench=>ench.lvl //将辅助eoc加入表单
+                    .filter(lvlobj=>(lvlobj.weight??0)>0)
+                    .map(lvlobj=>[operaEID(lvlobj.ench,"add"),{math:[`${(lvlobj.weight ?? 0)}`]}] satisfies [EocID,NumberExpr]))
+        ];
     }
 
     //鉴定条件

@@ -7,9 +7,10 @@ import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
 import { Protection } from "./Protection";
 
+const dt = ["bash","cut","stab","bullet"] as const;
 export const Fragile = {
     id:"Fragile",
-    max:5,
+    max:3,
     ctor:dm=>{
         const enchName = "脆弱";
         const mainFlag = genMainFlag(Fragile.id,enchName);
@@ -19,23 +20,13 @@ export const Fragile = {
             type:"effect_type",
             id:effid,
             name:[`${enchName} 附魔效果`],
-            desc:[`${enchName} 附魔正在生效 每层效果提供 5% 物理伤害减免`],
-            max_intensity:15,
+            desc:[`${enchName} 附魔正在生效 每层效果提供 10% 物理伤害减免`],
+            max_intensity:7,
             enchantments:[{
                 condition:"ALWAYS",
-                incoming_damage_mod_post_absorbed:[{
-                    type:"bash",
-                    multiply:{math:[`u_effect_intensity('${effid}') * 0.05`]},
-                },{
-                    type:"cut",
-                    multiply:{math:[`u_effect_intensity('${effid}') * 0.05`]},
-                },{
-                    type:"stab",
-                    multiply:{math:[`u_effect_intensity('${effid}') * 0.05`]},
-                },{
-                    type:"bullet",
-                    multiply:{math:[`u_effect_intensity('${effid}') * 0.05`]},
-                }],
+                incoming_damage_mod_post_absorbed:dt.map(type=>(
+                    {type,multiply:{math:[`u_effect_intensity('${effid}') * 0.1`]}}
+                ))
             }]
         }
         //构造附魔集
@@ -45,8 +36,8 @@ export const Fragile = {
             intensity_effect: [enchEffect.id],
             ench_type:["armor"],
             lvl:[],
-            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
-            remove_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"remove")}]
+            //负面附魔会附带绑定诅咒
+            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}]
         };
         //构造等级变体
         const lvlvar = range(Fragile.max).map(idx=>{
@@ -57,7 +48,7 @@ export const Fragile = {
                 type:"json_flag",
                 id:enchLvlID(Fragile.id,lvl),
                 name:subName,
-                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*5}% 所受到的物理伤害`),
+                info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
             //加入输出
