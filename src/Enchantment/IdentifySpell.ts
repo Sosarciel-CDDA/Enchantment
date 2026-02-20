@@ -6,15 +6,15 @@ import { EnchTypeSearchDataMap, VaildEnchCategoryList } from "./EnchInterface";
 import { IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE } from "./Define";
 
 
+export const IdentifySpellID = EMDef.genSpellID("RandIdentify");
 
 export async function buildIdentifySpell(dm:DataManager){
     const out:JObject[] = [];
 
     //随机鉴定
-    const spellId = EMDef.genSpellID("RandIdentify");
     const randIdentifyEoc = EMDef.genActEoc("RandIdentify_eoc",[
         {run_eocs:INIT_ENCH_DATA_EOC_ID},
-        {math:["_identSpellCount","=",`u_spell_level('${spellId}') / 2 + 1`]},
+        {math:["_identSpellCount","=",`u_spell_level('${IdentifySpellID}') / 2 + 1`]},
         {u_run_inv_eocs:"all",
         true_eocs:{
             id:EMDef.genEocID("RandIdebtify_eoc_sub"),
@@ -33,7 +33,7 @@ export async function buildIdentifySpell(dm:DataManager){
         }},
     ])
     const randIdentify:Spell={
-        id:spellId,
+        id:IdentifySpellID,
         type:"SPELL",
         name:"随机鉴定术",
         description:"随机鉴定背包中几个未鉴定的物品",

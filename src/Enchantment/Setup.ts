@@ -2,6 +2,8 @@ import { Eoc, JM, Mutation, TalkTopic } from "@sosarciel-cdda/schema";
 import { EMDef } from "../EMDefine";
 import { ENCH_CHANGE, MAX_ENCH_COUNT, MAX_ENCH_POINT } from "./Define";
 import { DataManager } from "@sosarciel-cdda/event";
+import { RemoveCurseSpellID } from "./RemoveCurseSpell";
+import { IdentifySpellID } from "./IdentifySpell";
 
 
 
@@ -36,9 +38,9 @@ const setupTopic = {
         `${MAX_ENCH_POINT} : <global_val:${MAX_ENCH_POINT}>\n` +
         `${MAX_ENCH_COUNT} : <global_val:${MAX_ENCH_COUNT}>`,
     responses:[
-        {topic: "TALK_DONE",text:"不做改变",condition:{u_has_trait:setMutId}},
+        {topic: "TALK_DONE",text:"不做改变"    ,condition:{u_has_trait:setMutId}},
         {topic: "TALK_DONE",text:"使用默认设置",effect:{run_eocs:[defSetupEoc.id]}},
-        {topic: "TALK_DONE",text:"自定义设置",effect:{run_eocs:[customSetupEoc.id]}},
+        {topic: "TALK_DONE",text:"自定义设置"  ,effect:{run_eocs:[customSetupEoc.id]}},
     ]
 } satisfies TalkTopic;
 const openSettingEoc:Eoc = {
@@ -69,9 +71,19 @@ const setupEoc:Eoc = {
         { u_add_trait:setMutId },
     ],
 }
+const initEoc:Eoc = {
+    id:EMDef.genEocID(`Init`),
+    type:"effect_on_condition",
+    eoc_type:"ACTIVATION",
+    effect:[
+        {math:[JM.spellLevel('u',`'${RemoveCurseSpellID}'`),'=','0']},
+        {math:[JM.spellLevel('u',`'${IdentifySpellID}'`),'=','0']},
+    ],
+}
 //#endregion
 
 
 export const buildSetup = (dm:DataManager)=>{
-    dm.addData([defSetupEoc,customSetupEoc,setupTopic,openSettingEoc,setupMut,setupEoc],'Setup');
+    dm.addInvokeID('GameStart',0,initEoc.id);
+    dm.addData([initEoc,defSetupEoc,customSetupEoc,setupTopic,openSettingEoc,setupMut,setupEoc],'Setup');
 }

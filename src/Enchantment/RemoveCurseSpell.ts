@@ -5,14 +5,14 @@ import { EMDef } from "@/src/EMDefine";
 import { IS_CURSED_FLAG_ID, REMOVE_CURSE_EOC_ID } from "./Define";
 
 
+export const RemoveCurseSpellID = EMDef.genSpellID("RandRemoveCurse");
 
 export async function buildRemoveCurseSpell(dm:DataManager){
     const out:JObject[] = [];
 
     //随机鉴定
-    const spellId = EMDef.genSpellID("RandRemoveCurse");
     const randRemoveCurseEoc = EMDef.genActEoc("RandRemoveCurse_eoc",[
-        {math:["_removeCurseSpellCount","=",`u_spell_level('${spellId}') / 4 + 1`]},
+        {math:["_removeCurseSpellCount","=",`u_spell_level('${RemoveCurseSpellID}') / 4 + 1`]},
         {u_run_inv_eocs:"all",
         true_eocs:{
             id:EMDef.genEocID("RandIdebtify_eoc_sub"),
@@ -30,7 +30,7 @@ export async function buildRemoveCurseSpell(dm:DataManager){
         }},
     ])
     const randRemoveCurse:Spell={
-        id:spellId,
+        id:RemoveCurseSpellID,
         type:"SPELL",
         name:"随机诅咒移除",
         description:"随机移除背包中几个诅咒物品的所有诅咒",
