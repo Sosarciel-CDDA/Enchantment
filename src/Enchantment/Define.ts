@@ -1,5 +1,5 @@
 import { EnchTypeData } from "./EnchInterface";
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { Flag, FlagID } from "@sosarciel-cdda/schema";
 
 

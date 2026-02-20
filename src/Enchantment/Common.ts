@@ -1,7 +1,7 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchTypeData, EnchTypeSearchDataMap, VaildEnchType, VaildEnchTypeList } from "./EnchInterface";
 import { JObject } from "@zwa73/utils";
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
 import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_ONE_IN, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
 import { getEnchConflictsExpr } from "./Category";

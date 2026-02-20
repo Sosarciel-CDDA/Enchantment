@@ -1,6 +1,6 @@
 
 import { BoolExpr, DamageInfoOrder, DamageType, EocEffect, Mutation, MutationID, Time, Effect, EffectID, Item } from "@sosarciel-cdda/schema";
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { GlobalHook, DataManager } from "@sosarciel-cdda/event";
 
 /**修改效果为触发性效果, 并创建触发Eoc  

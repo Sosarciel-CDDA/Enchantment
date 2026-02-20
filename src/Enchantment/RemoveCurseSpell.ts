@@ -1,7 +1,7 @@
 import { JObject } from "@zwa73/utils";
 import { DataManager } from "@sosarciel-cdda/event";
 import { AnyItemFlag, Spell } from "@sosarciel-cdda/schema";
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { IS_CURSED_FLAG_ID, REMOVE_CURSE_EOC_ID } from "./Define";
 
 

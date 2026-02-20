@@ -1,4 +1,4 @@
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, Color, ColorList, EocEffect, FlagID } from "@sosarciel-cdda/schema";
 import { EnchInsData } from "./EnchInterface";

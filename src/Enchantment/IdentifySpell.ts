@@ -1,4 +1,4 @@
-import { EMDef } from "@src/EMDefine";
+import { EMDef } from "@/src/EMDefine";
 import { JObject } from "@zwa73/utils";
 import { DataManager } from "@sosarciel-cdda/event";
 import { Spell } from "@sosarciel-cdda/schema";
