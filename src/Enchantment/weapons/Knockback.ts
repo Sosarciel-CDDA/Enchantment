@@ -1,7 +1,6 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@src/EMDefine";
-import { range } from "@zwa73/utils";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman, createEnchLvlData } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { AdditionalStrike } from "./AdditionalStrike";
 import { enchLvlID } from "../Define";
@@ -31,7 +30,7 @@ export const Knockback = {
             description: `${enchName} 附魔触发法术`
         }
         //构造等级变体
-        const lvldat = range(Knockback.max).map(idx=>{
+        const {lvl,data} = createEnchLvlData(Knockback.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -55,19 +54,19 @@ export const Knockback = {
                 },
                 data:[ench,teoc]
             }
-        }).drain();
+        });
 
         //构造附魔集
         const enchData:EnchData={
             id:Knockback.id,
-            main, lvl:lvldat.map(v=>v.lvl),
+            main, lvl,
             ench_type:["weapons"],
         };
         //互斥附魔flag
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,AdditionalStrike);
         dm.addData([
-            main, tspell, ...lvldat.map(v=>v.data).flat(),
+            main, tspell, ...data,
         ],"ench",Knockback.id);
         return enchData;
     }

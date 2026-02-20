@@ -1,8 +1,9 @@
 import { EMDef } from "@src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, Color, ColorList, EocEffect, Flag, FlagID } from "@sosarciel-cdda/schema";
-import { EnchCtor, EnchData } from "./EnchInterface";
+import { EnchCtor, EnchData, EnchLvlData } from "./EnchInterface";
 import { enchLvlID } from "./Define";
+import { JObject, range } from "@zwa73/utils";
 
 
 
@@ -85,4 +86,12 @@ export function genEnchPrefix(color:Color|"good"|"bad",name:string){
     if(ColorList.includes(color as Color))
         return `<color_${color}>[${name}]</color> `;
     return `<${color}>[${name}]</${color}> `;
+}
+
+/**创建等级数据 */
+export function createEnchLvlData(max:number,fn:(idx:number)=>{lvl:EnchLvlData,data?:JObject[]}){
+    return range(max).map(idx=>fn(idx)).drain().reduce((acc,cur)=>({
+            lvl:[...acc.lvl,cur.lvl],
+            data:[...acc.data,...cur.data??[]]
+        }),{lvl:[],data:[]} as {lvl:EnchLvlData[],data:JObject[]});
 }

@@ -1,7 +1,6 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { range } from "@zwa73/utils";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman, createEnchLvlData } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
@@ -16,7 +15,7 @@ export const Fragile = {
         const main = genMainFlag(Fragile.id,enchName);
         //被动效果
         const effid = EMDef.genEffectID(Fragile.id);
-        const enchEffect:Effect = {
+        const eff:Effect = {
             type:"effect_type",
             id:effid,
             name:[`${enchName} 附魔效果`],
@@ -31,7 +30,7 @@ export const Fragile = {
         }
 
         //构造等级变体
-        const lvl = range(Fragile.max).map(idx=>{
+        const {lvl} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -42,12 +41,12 @@ export const Fragile = {
                 info:genEnchInfo("bad",subName,`这件物品会增加 ${lvl*10}% 所受到的物理伤害`),
                 item_prefix:genEnchPrefix('bad',subName),
             };
-            return {
+            return {lvl:{
                 ench,
                 weight:(Fragile.max-idx)/4,
                 intensity:lvl,
-            }
-        }).drain();
+            }}
+        });
 
         //构造附魔集
         const enchData:EnchData={
@@ -63,7 +62,7 @@ export const Fragile = {
         genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Protection);
         dm.addData([
-            main,enchEffect,
+            main,eff,
             ...lvl.map(v=>v.ench),
         ],"ench",Fragile.id);
         return enchData;
