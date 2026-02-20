@@ -36,17 +36,12 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchData[]) {
                     id:EMDef.genEocID(`SumEnchCache_${cond}`),
                     effect:[
                         //遍历附魔
-                        ...enchDataList.map(ench=>
-                            ench.lvl.map(lvlobj=>{
-                                const activeCond = ench.effect_active_cond??[...EffectActiveCondList];
-                                if(lvlobj.intensity!=null && activeCond.includes(cond)){
-                                    const seff:EocEffect = {
-                                        if:{npc_has_flag:lvlobj.ench.id},
-                                        then:[{math:[enchInsVar(ench,"u"),"+=",`${lvlobj.intensity}`]}]
-                                    }
-                                    return seff;
-                                }
-                            }).filter(e=>e!==undefined)).flat()
+                        ...enchDataList.map(ench=>ench.lvl
+                            .filter(lvlobj=>lvlobj.intensity!=null && (ench.effect_active_cond==null || ench.effect_active_cond.includes(cond)))
+                            .map(lvlobj=>({
+                                if:{npc_has_flag:lvlobj.ench.id},
+                                then:[{math:[enchInsVar(ench,"u"),"+=",`${lvlobj.intensity}`]}]
+                            }) satisfies EocEffect).filter(e=>e!==undefined)).flat()
                     ]
                 }
             }) satisfies EocEffect)
