@@ -3,31 +3,40 @@ import { EMDef } from "@/src/EMDefine";
 import { Flag, FlagID } from "@sosarciel-cdda/schema";
 
 
-/**默认的最大附魔点数 */
-export const MAX_ENCH_POINT = 100;
-/**最大附魔尝试次数 */
-export const MAX_ENCH_COUNT = 10;
-/**附魔物品生成 one_in 概率 */
-export const ENCH_ONE_IN    = 2;
+/**最大附魔点数
+ * 变量名
+ */
+export const MAX_ENCH_POINT = "MaxEnchPoint";
+
+/**最大附魔尝试次数
+ * 变量名
+ */
+export const MAX_ENCH_COUNT = "MaxEnchCount";
+
+/**附魔物品生成百分概率
+ * 变量名
+ */
+export const ENCH_CHANGE    = "EnchChange";
+
 /**空附魔 one_in 概率 */
 export const ENCH_EMPTY_IN  = 10;
 
 /**表示物品完成附魔初始化
  * 变量名
  */
-export const COMPLETE_ENCH_INIT = "completedEnchInit";
+export const COMPLETE_ENCH_INIT = "CompletedEnchInit";
 /**物品附魔点数
  * 变量名
  */
-export const ENCH_POINT_CUR = "enchPoint";
+export const ENCH_POINT_CUR = "EnchPoint";
 /**表述物品的最大附魔点数 需初始化
  * 变量名
  */
-export const ENCH_POINT_MAX = "enchPointMax";
+export const ENCH_POINT_MAX = "EnchPointMax";
 /**表示物品的附魔类型 需初始化
  * 变量名
  */
-export const ITEM_ENCH_TYPE = "itemEnchType";
+export const ITEM_ENCH_TYPE = "ItemEnchType";
 
 /**表示物品是被诅咒的 需鉴定 */
 export const IS_CURSED_FLAG_ID     = EMDef.genFlagID("IS_CURSED");

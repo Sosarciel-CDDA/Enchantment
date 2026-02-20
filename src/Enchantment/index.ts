@@ -4,6 +4,7 @@ import { buildCommon } from "./Common";
 import { buildIdentifySpell } from "./IdentifySpell";
 import { buildRemoveCurseSpell } from "./RemoveCurseSpell";
 import { buildEnchCategory } from "./Category";
+import { buildSetup } from "./Setup";
 
 
 
@@ -20,4 +21,5 @@ export async function createEnchantment(dm:DataManager){
     await buildDebugItem(dm,enchFlagList);
     await buildIdentifySpell(dm);
     await buildRemoveCurseSpell(dm);
+    await buildSetup(dm);
 }
