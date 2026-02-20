@@ -3,7 +3,7 @@ import { EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
-import { operaEID, enchLvlID } from "../Common";
+import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
 import { Protection } from "./Protection";
 

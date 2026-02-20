@@ -3,14 +3,14 @@ import { CON_SPELL_FLAG, EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
-import { enchLvlID } from "../Common";
 import { AdditionalStrike } from "./AdditionalStrike";
+import { enchLvlID } from "../Define";
 
 
 
 export const Knockback = {
     id:"Knockback",
-    max:5,
+    max:2,
     ctor:dm=>{
         const enchName = "击退";
         const mainFlag = genMainFlag(Knockback.id,enchName);

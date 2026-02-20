@@ -3,7 +3,7 @@ import { EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
 import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
-import { enchLvlID } from "../Common";
+import { enchLvlID } from "../Define";
 import { Fragile } from "./Fragile";
 
 

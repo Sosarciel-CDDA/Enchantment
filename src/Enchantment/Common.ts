@@ -152,7 +152,8 @@ function buildOperaEoc(enchDataList:EnchData[]){
     ).flat();
 
     //{not:{npc_has_flag:enchset.main.id}}
-    //移除附魔子eoc 不会移除 被诅咒 IS_CURSED_FLAG_ID flag
+    //移除附魔子eoc
+    //由于物品可能含有多个诅咒, 所以单一附魔移除不会移除 被诅咒 IS_CURSED_FLAG_ID flag
     const removeeocList = enchDataList.map(data=>
         data.lvl.map(lvlobj=>
             EMDef.genActEoc(operaEID(lvlobj.ench,"remove"),[
