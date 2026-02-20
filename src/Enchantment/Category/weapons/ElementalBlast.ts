@@ -55,7 +55,7 @@ export const ElementalBlast = {
                 {u_cast_spell:{id:tspell.id},loc:{context_val:`${ElementalBlast.id}_loc`}}
             ])
             return {
-                instance:{ ench, weight:10, point:40 },
+                instance:{ ench, weight:2.5, point:40 },
                 data:[tspell,ench,teoc]
             }
         });
