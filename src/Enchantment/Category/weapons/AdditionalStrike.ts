@@ -13,16 +13,17 @@ export const AdditionalStrike = {
         const {instance,data} = createEnchLvlData(AdditionalStrike.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const change = (lvl+1)*10;
             //变体ID
             const ench:Flag = {
                 type:"json_flag", name,
                 id:enchLvlID(AdditionalStrike.id,lvl),
-                info:genEnchInfo('good',name,`这件物品有 ${(lvl+1)*10}% 的概率多攻击一次`),
+                info:genEnchInfo('good',name,`这件物品有 ${change}% 的概率多攻击一次`),
                 item_prefix:genEnchPrefix('good',name),
             };
             //触发eoc
             const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
-                {if:{x_in_y_chance:{x:lvl+1,y:10}},then:[
+                {if:{x_in_y_chance:{x:change,y:100}},then:[
                     {u_attack:"tec_none",forced_movecost:1}
                 ]}
             ])
