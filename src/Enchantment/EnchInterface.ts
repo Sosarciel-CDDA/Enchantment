@@ -31,12 +31,14 @@ export const EffectActiveCondSearchDataMap:Record<EffectActiveCond,ItemSearchDat
     //food    :[{flags:["EATEN_HOT"]},{flags:["SMOKABLE"]}],
 }
 
-/**附魔数据 */
-export type EnchData = {
+/**附魔类型数据 */
+export type EnchTypeData = {
     /**id */
     id:string;
-    /**冲突标识 */
-    conflicts?:Flag[];
+    /**冲突键组
+     * 冲突键组相交的附魔互相冲突
+     */
+    conflicts?:string[];
     /**附魔强度导致的效果 */
     intensity_effect?:EffectID[];
     /**强度生效方式 undefined时为全部 */
@@ -44,7 +46,7 @@ export type EnchData = {
     /**限制类型 */
     ench_type:VaildEnchType[];
     /**强度变体数据集 */
-    lvl:EnchLvlData[];
+    instance:EnchInsData[];
     /**添加时会执行的effect */
     add_effects?:EocEffect[];
     /**移除时会执行的effect */
@@ -55,8 +57,8 @@ export type EnchData = {
     is_curse?:boolean;
 }
 
-/**附魔的其中一个等级变体的数据 */
-export type EnchLvlData = {
+/**附魔类型中的某个实例的数据 */
+export type EnchInsData = {
     /**附魔标志 */
     ench:Flag;
     /**随机权重 */
@@ -81,5 +83,5 @@ export type EnchCtor = {
     id  :string;
     /**附魔最大值 默认1 */
     max?:number;
-    ctor:(dm:DataManager)=>MPromise<EnchData>;
+    ctor:(dm:DataManager)=>MPromise<EnchTypeData>;
 }

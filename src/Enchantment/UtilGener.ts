@@ -1,8 +1,7 @@
 import { EMDef } from "@src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, Color, ColorList, EocEffect, FlagID } from "@sosarciel-cdda/schema";
-import { EnchCtor, EnchData, EnchLvlData } from "./EnchInterface";
-import { enchLvlID } from "./Define";
+import { EnchInsData } from "./EnchInterface";
 import { JObject, range } from "@zwa73/utils";
 
 
@@ -44,26 +43,6 @@ export function numToRoman(num:number) {
     return roman;
 }
 
-/**添加同附魔lvl变体的基础互斥 */
-export function genLvlConfilcts(enchData:EnchData){
-    enchData.lvl.forEach(lvlobj=>{
-        const ench = lvlobj.ench;
-        ench.conflicts = ench.conflicts??[];
-        ench.conflicts.push(...enchData.lvl
-            .filter(sublvlobj=>sublvlobj.ench.id!=ench.id)
-            .map(subelvlobj=>subelvlobj.ench.id))
-    })
-}
-
-/**根据ID与最大等级添加附魔互斥 */
-export function genEnchConfilcts(base:EnchData,target:EnchCtor){
-    base.lvl.forEach(lvlobj=>{
-        const ench = lvlobj.ench;
-        ench.conflicts = ench.conflicts??[];
-        for(let lvl=1;lvl<=(target.max??1);lvl++)
-            ench.conflicts.push(enchLvlID(target.id,lvl))
-    })
-}
 
 /**生成附魔说明 */
 export function genEnchInfo(color:Color|"good"|"bad",name:string,desc:string){
@@ -80,9 +59,9 @@ export function genEnchPrefix(color:Color|"good"|"bad",name:string){
 }
 
 /**创建等级数据 */
-export function createEnchLvlData(max:number,fn:(idx:number)=>{lvl:EnchLvlData,data?:JObject[]}){
+export function createEnchLvlData(max:number,fn:(idx:number)=>{instance:EnchInsData,data?:JObject[]}){
     return range(max).map(idx=>fn(idx)).drain().reduce((acc,cur)=>({
-            lvl:[...acc.lvl,cur.lvl],
+            instance:[...acc.instance,cur.instance],
             data:[...acc.data,...cur.data??[]]
-        }),{lvl:[],data:[]} as {lvl:EnchLvlData[],data:JObject[]});
+        }),{instance:[],data:[]} as {instance:EnchInsData[],data:JObject[]});
 }

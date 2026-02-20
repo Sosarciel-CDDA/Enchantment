@@ -1,7 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "../UtilGener";
-import { EnchCtor, EnchData } from "../EnchInterface";
-import { Knockback } from "./Knockback";
+import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "../UtilGener";
+import { EnchCtor, EnchTypeData } from "../EnchInterface";
 import { enchLvlID } from "../Define";
 
 
@@ -11,7 +10,7 @@ export const AdditionalStrike = {
     ctor:dm=>{
         const name = "追加打击";
         //构造等级变体
-        const {lvl,data} = createEnchLvlData(AdditionalStrike.max,idx=>{
+        const {instance,data} = createEnchLvlData(AdditionalStrike.max,idx=>{
             const lvl = idx+1;
             const subName = `${name} ${numToRoman(lvl)}`;
             //变体ID
@@ -30,7 +29,7 @@ export const AdditionalStrike = {
             ])
             //加入输出
             return {
-                lvl:{
+                instance:{
                     ench,
                     weight:AdditionalStrike.max-idx,
                     point:lvl*2,
@@ -39,13 +38,12 @@ export const AdditionalStrike = {
             }
         });
         //构造附魔集
-        const enchData:EnchData={
-            id:AdditionalStrike.id, lvl,
+        const enchData:EnchTypeData={
+            id:AdditionalStrike.id, instance,
             ench_type:["weapons"],
+            conflicts:["AttackPosition"],
         };
-        //互斥附魔flag
-        genLvlConfilcts(enchData);
-        genEnchConfilcts(enchData,Knockback);
+
         dm.addData([...data],"ench",AdditionalStrike.id);
         return enchData;
     }

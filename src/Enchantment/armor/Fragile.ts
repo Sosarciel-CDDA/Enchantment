@@ -1,10 +1,9 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
-import { EnchCtor, EnchData } from "../EnchInterface";
+import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
+import { EnchCtor, EnchTypeData } from "../EnchInterface";
 import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
-import { Protection } from "./Protection";
 
 const dt = ["bash","cut","stab","bullet"] as const;
 export const Fragile = {
@@ -29,7 +28,7 @@ export const Fragile = {
         }
 
         //构造等级变体
-        const {lvl,data} = createEnchLvlData(Fragile.max,idx=>{
+        const {instance,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -41,7 +40,7 @@ export const Fragile = {
                 item_prefix:genEnchPrefix('bad',subName),
             };
             return {
-                lvl:{
+                instance:{
                     ench,
                     weight:(Fragile.max-idx)/4,
                     intensity:lvl,
@@ -51,17 +50,15 @@ export const Fragile = {
         });
 
         //构造附魔集
-        const enchData:EnchData={
-            id:Fragile.id, lvl,
+        const enchData:EnchTypeData={
+            id:Fragile.id, instance,
             intensity_effect: [effid],
             ench_type:["armor"],
             //负面附魔会附带绑定诅咒
-            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}]
+            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
+            conflicts:["Protection"],
         };
 
-        //互斥附魔flag
-        genLvlConfilcts(enchData);
-        genEnchConfilcts(enchData,Protection);
         dm.addData([eff,...data],"ench",Fragile.id);
         return enchData;
     }

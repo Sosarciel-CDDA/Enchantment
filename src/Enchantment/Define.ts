@@ -1,4 +1,4 @@
-import { EnchData } from "./EnchInterface";
+import { EnchTypeData } from "./EnchInterface";
 import { EMDef } from "@src/EMDefine";
 import { Flag, FlagID } from "@sosarciel-cdda/schema";
 
@@ -42,7 +42,7 @@ export function operaEID(flag:Flag|FlagID,t:"add"|"remove"){
     return EMDef.genEocID(`${id}_${t}`);
 }
 /**附魔强度id */
-export const enchInsVar = (ench:EnchData,t:"u"|"n")=>`${t}_${ench.id}`
+export const enchInsVar = (ench:EnchTypeData,t:"u"|"n")=>`${t}_${ench.id}`
 /**附魔的等级flagID */
 export const enchLvlID = (baseID:string,lvl:number)=> EMDef.genFlagID(`${baseID}_${lvl}_Ench`);
 

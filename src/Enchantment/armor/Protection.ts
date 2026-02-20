@@ -1,9 +1,8 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
-import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
-import { EnchCtor, EnchData } from "../EnchInterface";
+import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "../UtilGener";
+import { EnchCtor, EnchTypeData } from "../EnchInterface";
 import { enchLvlID } from "../Define";
-import { Fragile } from "./Fragile";
 
 
 const dt = ["bash","cut","stab","bullet"] as const;
@@ -29,7 +28,7 @@ export const Protection = {
         }
 
         //构造等级变体
-        const {lvl,data} = createEnchLvlData(Protection.max,idx=>{
+        const {instance,data} = createEnchLvlData(Protection.max,idx=>{
             const lvl = idx+1;
             const subName = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
@@ -41,7 +40,7 @@ export const Protection = {
                 item_prefix:genEnchPrefix('good',subName),
             };
             return {
-                lvl:{
+                instance:{
                     ench,
                     weight:Protection.max-idx,
                     intensity:lvl,
@@ -52,16 +51,14 @@ export const Protection = {
         });
 
         //构造附魔集
-        const enchData:EnchData={
+        const enchData:EnchTypeData={
             id:Protection.id,
-            lvl,
+            instance,
             intensity_effect: [effid],
             ench_type:["armor"],
+            conflicts:["Protection"],
         };
 
-        //互斥附魔flag
-        genLvlConfilcts(enchData);
-        genEnchConfilcts(enchData,Fragile);
         dm.addData([eff,...data],"ench",Protection.id);
         return enchData;
     }

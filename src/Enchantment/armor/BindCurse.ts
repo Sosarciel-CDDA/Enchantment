@@ -1,6 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix } from "../UtilGener";
-import { EnchCtor, EnchData } from "../EnchInterface";
+import { EnchCtor, EnchTypeData } from "../EnchInterface";
 import { enchLvlID } from "../Define";
 
 
@@ -17,10 +17,10 @@ export const BindCurse = {
         };
 
         //构造附魔集
-        const enchData:EnchData={
+        const enchData:EnchTypeData={
             id:BindCurse.id,
             ench_type:["armor"],
-            lvl:[{
+            instance:[{
                 ench,
                 add_effects:[
                     {npc_set_flag:"INTEGRATED"},

@@ -1,12 +1,10 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { Knockback } from "./Knockback";
 import { AdditionalStrike } from "./AdditionalStrike";
+import { buildEnchCate } from "../CategoryBuilder";
 
 
 
 export async function buildWeaponsEnch(dm:DataManager){
-    return await Promise.all([
-        await Knockback.ctor(dm),
-        await AdditionalStrike.ctor(dm),
-    ])
+    return buildEnchCate(dm,Knockback,AdditionalStrike);
 }
