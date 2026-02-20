@@ -2,7 +2,7 @@ import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
-import { enchLvlID } from "@/src/Enchantment/Define";
+import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
 
@@ -44,7 +44,10 @@ export const Knockback = {
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
             return {
-                instance:{ ench, weight:[20,10][idx], point:[20,40][idx] },
+                instance:{ ench,
+                    weight:[RarityWeight.Magic,RarityWeight.Rare][idx],
+                    point :[RarityPoints.Magic,RarityPoints.Rare][idx]
+                },
                 data:[ench,teoc]
             }
         });

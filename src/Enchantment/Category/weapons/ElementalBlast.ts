@@ -2,6 +2,7 @@ import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
 import { Flag, JM, Spell } from "@sosarciel-cdda/schema";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, genWieldTrigger } from "../UtilGener";
+import { RarityPoints, RarityWeight } from "../../Define";
 
 const list = [
     ["heat"     ,"火焰"],
@@ -55,7 +56,10 @@ export const ElementalBlast = {
                 {u_cast_spell:{id:tspell.id},loc:{context_val:`${ElementalBlast.id}_loc`}}
             ])
             return {
-                instance:{ ench, weight:10/list.length, point:40 },
+                instance:{ ench,
+                    weight:RarityWeight.Epic/list.length,
+                    point :RarityPoints.Epic
+                },
                 data:[tspell,ench,teoc]
             }
         });

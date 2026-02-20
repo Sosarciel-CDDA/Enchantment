@@ -2,7 +2,7 @@ import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
-import { enchLvlID } from "@/src/Enchantment/Define";
+import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
 const dt = ["bash","cut","stab","bullet"] as const;
@@ -40,8 +40,8 @@ export const Protection = {
             };
             return {
                 instance:{ ench, intensity:lvl+1,
-                    weight:[20,10][idx],
-                    point :[20,40][idx],
+                    weight:[RarityWeight.Magic,RarityWeight.Rare][idx],
+                    point :[RarityPoints.Magic,RarityPoints.Rare][idx],
                 },
                 data:[ench]
             }

@@ -72,3 +72,59 @@ export const UPGRADE_ENCH_CACHE_EOC_ID = EMDef.genEocID("UpgradeEnchCache");
 export const INIT_ENCH_DATA_EOC_ID = EMDef.genEocID("InitEnchData");
 /**移除诅咒EocID */
 export const REMOVE_CURSE_EOC_ID = EMDef.genEocID("RemoveCurse");
+
+
+/**稀有度权重 */
+export const RarityWeight = {
+    /** 普通 (Normal) - 白色 
+     * 没有任何附加魔法词缀 (Ego) 的基础底材。
+     */
+    Normal:60,
+    /** 魔法 (Magic) - 绿色
+     * 通常带有 1~2 个魔法词缀，提供基础的属性加成。
+     */
+    Magic:50,
+    /** 稀有 (Rare) - 蓝色
+     * 带有 3 个或更多词缀组合，属性加成丰厚，是游戏中前期的主力装备。
+     */
+    Rare:40,
+    /** 史诗 (Epic) - 紫色
+     * 带有 2 个高级词缀组合，属性非常扎实，通常是前中期的主力。
+     */
+    Epic:30,
+    /** 随机神器 (Randart) - 粉色
+     * 系统随机生成的强大神器，通常由多个高级词缀组合而成，是后期毕业装的主要来源。
+     */
+    Randart:20,
+    /** 固定神器 (Fixed Artifact) - 黄色/金色
+     * 具有固定名称、背景传说 (Lore) 和独特专属属性组合的唯一装备。
+     */
+    Artifact:10,
+}
+/**稀有度点数 */
+export const RarityPoints = {
+    /** 普通 (Normal) - 白色 
+     * 没有任何附加魔法词缀 (Ego) 的基础底材。
+     */
+    Normal:10,
+    /** 魔法 (Magic) - 绿色
+     * 通常带有 1~2 个魔法词缀，提供基础的属性加成。
+     */
+    Magic:20,
+    /** 稀有 (Rare) - 蓝色
+     * 带有 3 个或更多词缀组合，属性加成丰厚，是游戏中前期的主力装备。
+     */
+    Rare:30,
+    /** 史诗 (Epic) - 紫色
+     * 带有 2 个高级词缀组合，属性非常扎实，通常是前中期的主力。
+     */
+    Epic:40,
+    /** 随机神器 (Randart) - 粉色
+     * 系统随机生成的强大神器，通常由多个高级词缀组合而成，是后期毕业装的主要来源。
+     */
+    Randart:50,
+    /** 固定神器 (Fixed Artifact) - 黄色/金色
+     * 具有固定名称、背景传说 (Lore) 和独特专属属性组合的唯一装备。
+     */
+    Artifact:60,
+}

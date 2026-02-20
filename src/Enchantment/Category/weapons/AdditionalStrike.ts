@@ -1,7 +1,7 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
-import { enchLvlID } from "@/src/Enchantment/Define";
+import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
 export const AdditionalStrike = {
@@ -29,7 +29,10 @@ export const AdditionalStrike = {
             ])
             //加入输出
             return {
-                instance:{ ench, weight:[20,10][idx], point:[30,60][idx] },
+                instance:{ ench,
+                    weight:[RarityWeight.Epic,RarityWeight.Artifact][idx],
+                    point :[RarityPoints.Epic,RarityPoints.Artifact][idx]
+                },
                 data:[ench,teoc]
             }
         });

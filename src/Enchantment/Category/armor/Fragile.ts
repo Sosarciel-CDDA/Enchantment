@@ -2,7 +2,7 @@ import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
-import { enchLvlID, operaEID } from "@/src/Enchantment/Define";
+import { enchLvlID, operaEID, RarityWeight } from "@/src/Enchantment/Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
 
 const dt = ["bash","cut","stab","bullet"] as const;
@@ -40,7 +40,7 @@ export const Fragile = {
             };
             return {
                 instance:{ ench, intensity:lvl+1,
-                    weight:[10,5][idx],
+                    weight:[RarityWeight.Magic/4,RarityWeight.Rare/4][idx],
                 },
                 data:[ench]
             }
