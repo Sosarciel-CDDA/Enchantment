@@ -54,7 +54,7 @@ export const Protection = {
         const enchData:EnchData={
             id:Protection.id,
             main, lvl,
-            intensity_effect: [enchEffect.id],
+            intensity_effect: [effid],
             ench_type:["armor"],
         };
 

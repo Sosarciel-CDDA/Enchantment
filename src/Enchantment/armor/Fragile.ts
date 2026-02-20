@@ -53,7 +53,7 @@ export const Fragile = {
         const enchData:EnchData={
             id:Fragile.id,
             main, lvl,
-            intensity_effect: [enchEffect.id],
+            intensity_effect: [effid],
             ench_type:["armor"],
             //负面附魔会附带绑定诅咒
             add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}]
