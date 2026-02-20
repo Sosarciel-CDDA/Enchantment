@@ -44,13 +44,13 @@ export function numToRoman(num:number) {
 }
 
 /**添加同附魔lvl变体的基础互斥 */
-export function genBaseConfilcts(enchData:EnchData){
+export function genLvlConfilcts(enchData:EnchData){
     enchData.lvl.forEach(lvlobj=>{
         const ench = lvlobj.ench;
         ench.conflicts = ench.conflicts??[];
         ench.conflicts.push(...enchData.lvl
-            .filter((sublvlobj)=>sublvlobj.ench.id!=ench.id)
-            .map((subelvlobj)=>subelvlobj.ench.id))
+            .filter(sublvlobj=>sublvlobj.ench.id!=ench.id)
+            .map(subelvlobj=>subelvlobj.ench.id))
     })
 }
 
@@ -59,7 +59,7 @@ export function genEnchConfilcts(base:EnchData,target:EnchCtor){
     base.lvl.forEach(lvlobj=>{
         const ench = lvlobj.ench;
         ench.conflicts = ench.conflicts??[];
-        for(let lvl=1;lvl<=target.max;lvl++)
+        for(let lvl=1;lvl<=(target.max??1);lvl++)
             ench.conflicts.push(enchLvlID(target.id,lvl))
     })
 }

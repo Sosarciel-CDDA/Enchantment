@@ -1,7 +1,7 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
-import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { enchLvlID, operaEID } from "../Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
@@ -70,7 +70,7 @@ export const Fragile = {
         }).drain().flat();
 
         //互斥附魔flag
-        genBaseConfilcts(enchData);
+        genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Protection);
         dm.addData([
             mainFlag,enchEffect,

@@ -6,7 +6,6 @@ import { enchLvlID } from "../Define";
 
 export const BindCurse = {
     id:"BindCurse",
-    max:1,
     ctor:dm=>{
         const enchName = "绑定诅咒";
         const ench:Flag = {

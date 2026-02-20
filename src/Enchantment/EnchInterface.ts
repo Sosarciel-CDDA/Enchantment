@@ -81,7 +81,7 @@ export type EnchLvlData = {
 export type EnchCtor = {
     /**附魔id */
     id  :string;
-    /**附魔最大值 */
-    max :number;
+    /**附魔最大值 默认1 */
+    max?:number;
     ctor:(dm:DataManager)=>MPromise<EnchData>;
 }

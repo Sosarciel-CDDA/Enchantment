@@ -1,6 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { range } from "@zwa73/utils";
-import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { Knockback } from "./Knockback";
 import { enchLvlID } from "../Define";
@@ -46,7 +46,7 @@ export const AdditionalStrike = {
             return [ench,teoc]
         }).drain().flat();
         //互斥附魔flag
-        genBaseConfilcts(enchData);
+        genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,Knockback);
         dm.addData([
             mainFlag, ...lvlvar,

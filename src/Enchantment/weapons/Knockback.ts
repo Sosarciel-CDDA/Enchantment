@@ -1,7 +1,7 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@src/EMDefine";
 import { range } from "@zwa73/utils";
-import { genBaseConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
+import { genLvlConfilcts, genEnchConfilcts, genEnchInfo, genEnchPrefix, genMainFlag, genWieldTrigger, numToRoman } from "../UtilGener";
 import { EnchCtor, EnchData } from "../EnchInterface";
 import { AdditionalStrike } from "./AdditionalStrike";
 import { enchLvlID } from "../Define";
@@ -63,7 +63,7 @@ export const Knockback = {
             return [ench,teoc]
         }).drain().flat();
         //互斥附魔flag
-        genBaseConfilcts(enchData);
+        genLvlConfilcts(enchData);
         genEnchConfilcts(enchData,AdditionalStrike);
         dm.addData([
             mainFlag, tspell, ...lvlvar,
