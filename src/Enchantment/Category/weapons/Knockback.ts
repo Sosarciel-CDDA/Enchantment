@@ -1,6 +1,6 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
-import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/UtilGener";
+import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID } from "@/src/Enchantment/Define";
 

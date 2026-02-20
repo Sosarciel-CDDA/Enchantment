@@ -1,6 +1,6 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
-import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/UtilGener";
+import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID, operaEID } from "@/src/Enchantment/Define";
 import { BindCurseLvlFlagId } from "./BindCurse";

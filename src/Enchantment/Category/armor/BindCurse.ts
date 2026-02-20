@@ -1,5 +1,5 @@
 import { Flag } from "@sosarciel-cdda/schema";
-import { genEnchInfo, genEnchPrefix } from "@/src/Enchantment/UtilGener";
+import { genEnchInfo, genEnchPrefix } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID } from "@/src/Enchantment/Define";
 

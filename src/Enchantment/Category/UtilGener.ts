@@ -1,7 +1,7 @@
 import { EMDef } from "@/src/EMDefine";
 import { CharHook, DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, Color, ColorList, EocEffect, FlagID } from "@sosarciel-cdda/schema";
-import { EnchInsData } from "./EnchInterface";
+import { EnchInsData } from "../EnchInterface";
 import { JObject, range } from "@zwa73/utils";
 
 
