@@ -163,6 +163,8 @@ function buildOperaEoc(enchDataList:EnchTypeData[]){
             EMDef.genActEoc(operaEID(ins.ench,"remove"),[
                 //添加移除变体flag
                 {npc_unset_flag:ins.ench.id},
+                //减少附魔点数
+                {math:[`n_${ENCH_POINT_CUR}`,"-=",`${ins.point}`]},
                 //添加附魔数据定义的副作用
                 ...data.remove_effects??[],
                 ...ins.remove_effects??[],
