@@ -40,7 +40,7 @@ export const Fragile = {
             };
             return {
                 instance:{ ench, intensity:lvl+1,
-                    weight:[RarityWeight.Magic/4,RarityWeight.Rare/4][idx],
+                    weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
                 },
                 data:[ench]
             }

@@ -57,8 +57,8 @@ export const ElementalBlast = {
             ])
             return {
                 instance:{ ench,
-                    weight:RarityWeight.Epic/list.length,
-                    point :RarityPoints.Epic
+                    weight:RarityWeight.Uncommon/list.length,
+                    point :RarityPoints.Basic
                 },
                 data:[tspell,ench,teoc]
             }

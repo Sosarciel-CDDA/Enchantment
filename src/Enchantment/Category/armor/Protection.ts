@@ -40,8 +40,8 @@ export const Protection = {
             };
             return {
                 instance:{ ench, intensity:lvl+1,
-                    weight:[RarityWeight.Magic,RarityWeight.Rare][idx],
-                    point :[RarityPoints.Magic,RarityPoints.Rare][idx],
+                    weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
+                    point :[RarityPoints.Basic ,RarityPoints.Magic][idx],
                 },
                 data:[ench]
             }

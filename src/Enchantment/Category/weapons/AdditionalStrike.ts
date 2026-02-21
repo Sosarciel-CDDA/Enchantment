@@ -30,8 +30,8 @@ export const AdditionalStrike = {
             //加入输出
             return {
                 instance:{ ench,
-                    weight:[RarityWeight.Epic,RarityWeight.Artifact][idx],
-                    point :[RarityPoints.Epic,RarityPoints.Artifact][idx]
+                    weight:[RarityWeight.Rare ,RarityWeight.Epic   ][idx],
+                    point :[RarityPoints.Magic,RarityPoints.Randart][idx]
                 },
                 data:[ench,teoc]
             }

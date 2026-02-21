@@ -45,8 +45,8 @@ export const Knockback = {
             ])
             return {
                 instance:{ ench,
-                    weight:[RarityWeight.Magic,RarityWeight.Rare][idx],
-                    point :[RarityPoints.Magic,RarityPoints.Rare][idx]
+                    weight:[RarityWeight.Uncommon,RarityWeight.Rare ][idx],
+                    point :[RarityPoints.Basic   ,RarityPoints.Magic][idx]
                 },
                 data:[ench,teoc]
             }

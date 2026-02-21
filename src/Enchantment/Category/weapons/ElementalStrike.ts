@@ -55,8 +55,8 @@ export const ElementalStrike = {
             ])
             return {
                 instance:{ ench,
-                    weight:RarityWeight.Rare/list.length,
-                    point :RarityPoints.Rare
+                    weight:RarityWeight.Common/list.length,
+                    point :RarityPoints.Basic
                 },
                 data:[tspell,ench,teoc]
             }
