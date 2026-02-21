@@ -1,6 +1,6 @@
 import { Eoc, JM, Mutation, TalkTopic } from "@sosarciel-cdda/schema";
 import { EMDef } from "../EMDefine";
-import { ENCH_CHANGE, MAX_ENCH_COUNT, MAX_ENCH_POINT } from "./Define";
+import { ENCH_CHANGE, MAX_ENCH_COUNT, BASE_ENCH_POINT, RAND_ENCH_POINT } from "./Define";
 import { DataManager } from "@sosarciel-cdda/event";
 import { RemoveCurseSpellID } from "./RemoveCurseSpell";
 import { IdentifySpellID } from "./IdentifySpell";
@@ -14,7 +14,8 @@ const defSetupEoc:Eoc = {
     eoc_type:"ACTIVATION",
     effect:[
         { math:[ENCH_CHANGE    ,'=',`10` ] },
-        { math:[MAX_ENCH_POINT ,'=',`100`] },
+        { math:[BASE_ENCH_POINT ,'=',`100`] },
+        { math:[RAND_ENCH_POINT ,'=',`100`] },
         { math:[MAX_ENCH_COUNT ,'=',`10` ] },
     ]
 }
@@ -24,8 +25,9 @@ const customSetupEoc:Eoc = {
     eoc_type:"ACTIVATION",
     effect:[
         { math:[ENCH_CHANGE    ,'=',JM.numInput(`'${ENCH_CHANGE} 附魔物品的生成几率, 100为100%'`,10)] },
-        { math:[MAX_ENCH_POINT ,'=',JM.numInput(`'${MAX_ENCH_POINT} 附魔物品生成时的最大点数, 越高则单个物品的附魔强度越高'`,100)] },
-        { math:[MAX_ENCH_COUNT ,'=',JM.numInput(`'${MAX_ENCH_COUNT} 附魔物品生成时的尝试次数, 越高越容易充满 ${MAX_ENCH_POINT}'`,10)] },
+        { math:[BASE_ENCH_POINT ,'=',JM.numInput(`'${BASE_ENCH_POINT} 附魔物品生成时的基础点数, 越高则单个物品的附魔强度越高'`,100)] },
+        { math:[RAND_ENCH_POINT ,'=',JM.numInput(`'${RAND_ENCH_POINT} 附魔物品生成时的最大随机点数, 越高则单个物品的附魔强度越高'`,100)] },
+        { math:[MAX_ENCH_COUNT ,'=',JM.numInput(`'${MAX_ENCH_COUNT} 附魔物品生成时的尝试次数, 越高越容易充满点数'`,10)] },
     ]
 }
 const setMutId = EMDef.genMutationID(`Setup`);
@@ -35,7 +37,8 @@ const setupTopic = {
     dynamic_line:
         `&对附魔的功能进行设置 当前:\n` +
         `${ENCH_CHANGE} : <global_val:${ENCH_CHANGE}>\n` +
-        `${MAX_ENCH_POINT} : <global_val:${MAX_ENCH_POINT}>\n` +
+        `${BASE_ENCH_POINT} : <global_val:${BASE_ENCH_POINT}>\n` +
+        `${RAND_ENCH_POINT} : <global_val:${RAND_ENCH_POINT}>\n` +
         `${MAX_ENCH_COUNT} : <global_val:${MAX_ENCH_COUNT}>`,
     responses:[
         {topic: "TALK_DONE",text:"不做改变"    ,condition:{u_has_trait:setMutId}},

@@ -3,10 +3,15 @@ import { EMDef } from "@/src/EMDefine";
 import { Flag, FlagID } from "@sosarciel-cdda/schema";
 
 
-/**最大附魔点数
+/**基础附魔点数
  * 变量名
  */
-export const MAX_ENCH_POINT = "MaxEnchPoint";
+export const BASE_ENCH_POINT = "BaseEnchPoint";
+
+/**随机附魔点数
+ * 变量名
+ */
+export const RAND_ENCH_POINT = "RandEnchPoint";
 
 /**最大附魔尝试次数
  * 变量名

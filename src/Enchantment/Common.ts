@@ -3,7 +3,7 @@ import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchTypeData, Ench
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
 import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, MAX_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID } from "./Define";
+import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -278,7 +278,7 @@ function buildInitEnchDataEoc(enchDataList:EnchTypeData[]){
             eoc_type:"ACTIVATION",
             effect:[
                 {npc_add_var:ITEM_ENCH_TYPE,value:t},
-                {math:[`n_${ENCH_POINT_MAX}`,"=",`${MAX_ENCH_POINT}`]},
+                {math:[`n_${ENCH_POINT_MAX}`,"=",`${BASE_ENCH_POINT} + rand(${RAND_ENCH_POINT})`]},
                 {math:[`n_${COMPLETE_ENCH_INIT}`,"=",'1']}
             ],
             condition:{math:[`n_${COMPLETE_ENCH_INIT}`,"!=",'1']}
