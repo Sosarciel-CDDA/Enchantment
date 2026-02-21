@@ -84,7 +84,7 @@ export const RarityWeight = {
     Uncommon   :180,
     /**罕见 如 追加打击I/保护II */
     Rare       :120,
-    /**罕见 如 追加打击II */
+    /**史诗 如 追加打击II */
     Epic       :80 ,
 }
 /**稀有度点数 */

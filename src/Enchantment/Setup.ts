@@ -14,8 +14,8 @@ const defSetupEoc:Eoc = {
     eoc_type:"ACTIVATION",
     effect:[
         { math:[ENCH_CHANGE    ,'=',`10` ] },
+        { math:[MAX_ENCH_POINT ,'=',`100`] },
         { math:[MAX_ENCH_COUNT ,'=',`10` ] },
-        { math:[MAX_ENCH_POINT ,'=',`10` ] },
     ]
 }
 const customSetupEoc:Eoc = {
