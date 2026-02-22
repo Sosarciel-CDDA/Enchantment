@@ -1,12 +1,14 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { JObject } from "@zwa73/utils";
-import { EocID, Flag, Item } from "@sosarciel-cdda/schema";
+import { EocID, Item } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { INIT_ENCH_DATA_EOC_ID, operaEID } from "./Define";
+import { EnchInsData } from "./EnchInterface";
 
 
 
-export async function buildDebugItem(dm:DataManager,enchFlagList:Flag[]){
+export async function buildDebugItem(dm:DataManager,enchInsList:EnchInsData[]){
+    const enchFlagList = enchInsList.map(ins=>ins.flag);
     const out:JObject[] = [];
     const NONEEocId = "EnchTestNone" as EocID;
 

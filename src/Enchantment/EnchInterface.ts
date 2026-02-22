@@ -37,7 +37,7 @@ export type EnchInsData = {
     /**id */
     id:string;
     /**附魔标志 */
-    ench:Flag;
+    flag:Flag;
     /**随机权重 */
     weight?:number;
     /**添加时会执行的effect */

@@ -32,26 +32,26 @@ export const Knockback = {
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
-            const ench:Flag = {
+            const flag:Flag = {
                 type:"json_flag", name,
                 id:enchLvlID(Knockback.id,lvl),
                 info:genEnchInfo('pink',name,`这件物品可以造成 ${lvl} 点击退伤害`),
                 item_prefix:genEnchPrefix('pink',name),
             };
             //触发eoc
-            const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
+            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
                 {npc_location_variable:{context_val:`${Knockback.id}_loc`}},
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
             return {
                 instance:{
-                    id:Knockback.id, ench,
+                    id:Knockback.id, flag,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
                     weight:[RarityWeight.Uncommon,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic   ,RarityPoints.Magic][idx]
                 },
-                data:[ench,teoc]
+                data:[flag,teoc]
             }
         });
 

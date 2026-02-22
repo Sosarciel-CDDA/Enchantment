@@ -13,7 +13,7 @@ export async function buildEnchCate(dm:DataManager,...ctorList:EnchCtor[]){
     const resultList = await Promise.all(ctorList.map(ctor=>ctor.ctor(dm))).then(v=>v.flat());
     resultList.forEach(v=>v.conflicts?.forEach(c=>{
         ConflictsIdx[c]??=new Set();
-        ConflictsIdx[c].add(v.ench.id)
+        ConflictsIdx[c].add(v.flag.id)
     }));
     return resultList;
 }

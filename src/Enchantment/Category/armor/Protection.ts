@@ -32,7 +32,7 @@ export const Protection = {
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
-            const ench:Flag = {
+            const flag:Flag = {
                 type:"json_flag", name,
                 id:enchLvlID(Protection.id,lvl),
                 info:genEnchInfo("good",name,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
@@ -40,14 +40,14 @@ export const Protection = {
             };
             return {
                 instance:{
-                    id:Protection.id,ench,
+                    id:Protection.id,flag,
                     category:["armor"],
                     conflicts:["Protection"],
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic ,RarityPoints.Magic][idx],
                 },
-                data:[ench]
+                data:[flag]
             }
         });
 

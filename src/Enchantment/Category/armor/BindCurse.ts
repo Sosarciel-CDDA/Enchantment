@@ -8,7 +8,7 @@ export const BindCurse = {
     id:"BindCurse",
     ctor:dm=>{
         const name = "绑定诅咒";
-        const ench:Flag = {
+        const flag:Flag = {
             type:"json_flag", name,
             id:BindCurseLvlFlagId,
             info:genEnchInfo("bad",name,`这件物品在移除诅咒前无法脱下`),
@@ -17,7 +17,7 @@ export const BindCurse = {
 
         //构造附魔集
         const enchData:EnchInsData={
-            id:BindCurse.id, ench,
+            id:BindCurse.id, flag,
             category:["armor"],
             add_effects:[
                 {npc_set_flag:"INTEGRATED"},
@@ -27,7 +27,7 @@ export const BindCurse = {
             is_curse:true
         };
 
-        dm.addData([ench],"ench",BindCurse.id);
+        dm.addData([flag],"ench",BindCurse.id);
         return [enchData];
     }
 } satisfies EnchCtor;

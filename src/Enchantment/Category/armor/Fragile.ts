@@ -32,7 +32,7 @@ export const Fragile = {
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
             //变体ID
-            const ench:Flag = {
+            const flag:Flag = {
                 type:"json_flag", name,
                 id:enchLvlID(Fragile.id,lvl),
                 info:genEnchInfo("bad",name,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
@@ -40,7 +40,7 @@ export const Fragile = {
             };
             return {
                 instance:{
-                    id:Fragile.id, ench,
+                    id:Fragile.id, flag,
                     effect: [{id:effid,value:lvl+1}],
                     category:["armor"],
                     //负面附魔会附带绑定诅咒
@@ -48,7 +48,7 @@ export const Fragile = {
                     conflicts:["Protection"],
                     weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
                 },
-                data:[ench]
+                data:[flag]
             }
         });
         dm.addData([eff,...data],"ench",Fragile.id);

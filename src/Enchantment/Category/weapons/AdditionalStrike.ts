@@ -15,14 +15,14 @@ export const AdditionalStrike = {
             const name = `${enchName} ${numToRoman(lvl)}`;
             const change = (lvl+1)*10;
             //变体ID
-            const ench:Flag = {
+            const flag:Flag = {
                 type:"json_flag", name,
                 id:enchLvlID(AdditionalStrike.id,lvl),
                 info:genEnchInfo('good',name,`这件物品有 ${change}% 的概率多攻击一次`),
                 item_prefix:genEnchPrefix('good',name),
             };
             //触发eoc
-            const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
+            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
                 {if:{x_in_y_chance:{x:change,y:100}},then:[
                     {u_attack:"tec_none",forced_movecost:1}
                 ]}
@@ -30,13 +30,13 @@ export const AdditionalStrike = {
             //加入输出
             return {
                 instance:{
-                    id:AdditionalStrike.id, ench,
+                    id:AdditionalStrike.id, flag,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
                     weight:[RarityWeight.Rare ,RarityWeight.Epic   ][idx],
                     point :[RarityPoints.Magic,RarityPoints.Randart][idx]
                 },
-                data:[ench,teoc]
+                data:[flag,teoc]
             }
         });
 

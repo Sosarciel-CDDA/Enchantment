@@ -36,13 +36,13 @@ export const ElementalBlast = {
                 description: `${name} 附魔触发法术`
             }
             //变体ID
-            const ench:Flag = {
+            const flag:Flag = {
                 type:"json_flag", name,
                 id: EMDef.genFlagID(`${ElementalBlast.id}_${elid}_Ench`),
                 info:genEnchInfo('good',name,`这件物品可以额外造成 20% 的范围 ${elname} 伤害`),
                 item_prefix:genEnchPrefix('good',name),
             };
-            const teoc = genWieldTrigger(dm,ench.id,"TryMeleeAttack",[
+            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
                 {
                     u_run_inv_eocs:"all",
                     search_data:[{wielded_only:true}],
@@ -57,13 +57,13 @@ export const ElementalBlast = {
             ])
             return {
                 instance:{
-                    id:ElementalBlast.id, ench,
+                    id:ElementalBlast.id, flag,
                     category:["weapons"],
                     conflicts:["Elemental"],
                     weight:RarityWeight.Uncommon/list.length,
                     point :RarityPoints.Basic
                 },
-                data:[tspell,ench,teoc]
+                data:[tspell,flag,teoc]
             }
         });
 

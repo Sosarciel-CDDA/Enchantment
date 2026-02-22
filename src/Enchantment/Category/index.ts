@@ -14,7 +14,7 @@ export const buildEnchCategory = async (dm:DataManager)=>{
 
     //为所有flag添加冲突id
     enchDataList.forEach(data=>{
-        data.ench.conflicts = getEnchConflictsID(data).filter(id=>id!=data.ench.id);
+        data.flag.conflicts = getEnchConflictsID(data).filter(id=>id!=data.flag.id);
     });
     return enchDataList;
 }
