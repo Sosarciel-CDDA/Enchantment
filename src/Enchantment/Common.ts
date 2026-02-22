@@ -15,10 +15,12 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
         ... buildInitEnchDataEoc(enchDataList)   ,//初始化附魔数据
     ];
 
+
+
+    const enchEffIdlist = Array.from(new Set(enchDataList.flatMap(ench=>formatArray(ench.effect).map(eff=>eff.id))));
+
     //清理附魔缓存
-    const clearCacheEoc = EMDef.genActEoc("ClearEnchCache",
-        enchDataList.flatMap(ench=>formatArray(ench.intensity).map(ins=>({math:[enchInsVar(ins,"u"),"=","0"]})satisfies EocEffect))
-    );
+    const clearCacheEoc = EMDef.genActEoc("ClearEnchCache",enchEffIdlist.map(id=>({math:[enchInsVar(id,"u"),"=","0"]}) satisfies EocEffect));
     out.push(clearCacheEoc);
 
     //刷新附魔缓存eoc
@@ -38,10 +40,10 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
                     effect:[
                         //遍历附魔
                         //排除无强度或非当前条件触发
-                        ...enchDataList.filter(ins=>ins.intensity!=null && (ins.effect_active_cond==null || ins.effect_active_cond.includes(cond)))
+                        ...enchDataList.filter(ins=>ins.effect!=null && (ins.effect_active_cond==null || ins.effect_active_cond.includes(cond)))
                             .map(ins=>({
                                 if:{npc_has_flag:ins.ench.id},
-                                then:[...formatArray(ins.intensity).map(ins => ({math:[enchInsVar(ins,"u"),"+=",`${ins.value}`]}) satisfies EocEffect)]
+                                then:[...formatArray(ins.effect).map(eff => ({math:[enchInsVar(eff.id,"u"),"+=",`${eff.value}`]}) satisfies EocEffect)]
                             }) satisfies EocEffect)]
                 }
             }) satisfies EocEffect)
@@ -54,15 +56,15 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
 
     //根据缓存添加效果
     enchDataList
-        .filter(ench=>ench.intensity!=null)
+        .filter(ench=>ench.effect!=null)
         .forEach(ench=>{
-            const intensity = formatArray(ench.intensity)
-            intensity.forEach(ins=>{
+            const intensity = formatArray(ench.effect)
+            intensity.forEach(eff=>{
                 //触发eoc
                 const teoc = EMDef.genActEoc(`${ench.id}_UpdateEffect`,[
-                    {if:{math:[enchInsVar(ins,"u"),">=","1"]},
-                    then:[{u_add_effect:ins.id,intensity:{math:[enchInsVar(ins,"u")]},duration:"PERMANENT"}],
-                    else:[{u_lose_effect:ins.id}]}
+                    {if:{math:[enchInsVar(eff.id,"u"),">=","1"]},
+                    then:[{u_add_effect:eff.id,intensity:{math:[enchInsVar(eff.id,"u")]},duration:"PERMANENT"}],
+                    else:[{u_lose_effect:eff.id}]}
                 ]);
                 dm.addInvokeEoc("WearItem"    ,0,teoc);
                 dm.addInvokeEoc("WieldItemRaw",0,teoc);

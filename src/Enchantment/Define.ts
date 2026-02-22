@@ -1,6 +1,5 @@
 import { EMDef } from "@/src/EMDefine";
-import { Flag, FlagID } from "@sosarciel-cdda/schema";
-import { EnchEffect } from "./EnchInterface";
+import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
 
 
 /**基础附魔点数
@@ -60,7 +59,7 @@ export const formatArray = <T>(val:T|T[]|null|undefined)=>
     val==null ? [] : Array.isArray(val) ? val : [val];
 
 /**附魔强度id */
-export const enchInsVar = (ench:EnchEffect,t:"u"|"n")=>`${t}_${ench.id}`;
+export const enchInsVar = (ench:EffectID,t:"u"|"n")=>`${t}_${ench}_CacheValue`;
 
 /**附魔的等级flagID */
 export const enchLvlID = (baseID:string,lvl:number)=> EMDef.genFlagID(`${baseID}_${lvl}_Ench`);

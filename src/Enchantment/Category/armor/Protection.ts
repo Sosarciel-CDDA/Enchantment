@@ -43,7 +43,7 @@ export const Protection = {
                     id:Protection.id,ench,
                     category:["armor"],
                     conflicts:["Protection"],
-                    intensity:[{id:effid,value:lvl+1}],
+                    effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic ,RarityPoints.Magic][idx],
                 },

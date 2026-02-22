@@ -41,7 +41,7 @@ export const Fragile = {
             return {
                 instance:{
                     id:Fragile.id, ench,
-                    intensity: [{id:effid,value:lvl+1}],
+                    effect: [{id:effid,value:lvl+1}],
                     category:["armor"],
                     //负面附魔会附带绑定诅咒
                     add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],

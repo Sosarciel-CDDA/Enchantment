@@ -47,7 +47,7 @@ export type EnchInsData = {
     /**附魔强度导致的效果
      * 未定义则不计入缓存
      */
-    intensity?:EnchEffect[]|EnchEffect;
+    effect?:EnchEffect[]|EnchEffect;
     /**附魔点数  
      * 未定义则为0  
      */
