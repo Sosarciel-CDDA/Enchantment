@@ -1,7 +1,7 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -44,7 +44,10 @@ export const Knockback = {
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
             return {
-                instance:{ ench,
+                instance:{
+                    id:Knockback.id, ench,
+                    category:["weapons"],
+                    conflicts:["AttackPosition"],
                     weight:[RarityWeight.Uncommon,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic   ,RarityPoints.Magic][idx]
                 },
@@ -52,14 +55,7 @@ export const Knockback = {
             }
         });
 
-        //构造附魔集
-        const enchData:EnchTypeData={
-            id:Knockback.id, instance,
-            category:["weapons"],
-            conflicts:["AttackPosition"],
-        };
-
         dm.addData([tspell, ...data],"ench",Knockback.id);
-        return enchData;
+        return instance;
     }
 } satisfies EnchCtor;

@@ -31,34 +31,11 @@ export const EffectActiveCondSearchDataMap:Record<EffectActiveCond,ItemSearchDat
     //food    :[{flags:["EATEN_HOT"]},{flags:["SMOKABLE"]}],
 }
 
-/**附魔类型数据 */
-export type EnchTypeData = {
-    /**id */
-    id:string;
-    /**冲突键组
-     * 冲突键组相交的附魔互相冲突
-     */
-    conflicts?:string[];
-    /**附魔强度导致的效果 */
-    intensity_effect?:EffectID[];
-    /**强度生效方式 undefined时为全部 */
-    effect_active_cond?:EffectActiveCond[];
-    /**限制类型 */
-    category:VaildEnchCategory[];
-    /**强度变体数据集 */
-    instance:EnchInsData[];
-    /**添加时会执行的effect */
-    add_effects?:EocEffect[];
-    /**移除时会执行的effect */
-    remove_effects?:EocEffect[];
-    /**是一个可以被移除诅移除的诅咒  
-     * 默认false  
-     */
-    is_curse?:boolean;
-}
-
+export type EnchEffect = {id:EffectID,value:number};
 /**附魔类型中的某个实例的数据 */
 export type EnchInsData = {
+    /**id */
+    id:string;
     /**附魔标志 */
     ench:Flag;
     /**随机权重 */
@@ -67,14 +44,26 @@ export type EnchInsData = {
     add_effects?:EocEffect[];
     /**移除时会执行的effect */
     remove_effects?:EocEffect[];
-    /**附魔缓存强度  
+    /**附魔强度导致的效果
      * 未定义则不计入缓存
      */
-    intensity?:number;
+    intensity?:EnchEffect[]|EnchEffect;
     /**附魔点数  
      * 未定义则为0  
      */
     point?:number;
+    /**是一个可以被移除诅移除的诅咒  
+     * 默认false  
+     */
+    is_curse?:boolean;
+    /**限制类型 */
+    category:VaildEnchCategory[];
+    /**强度生效方式 undefined时为全部 */
+    effect_active_cond?:EffectActiveCond[];
+    /**冲突键组
+     * 冲突键组相交的附魔互相冲突
+     */
+    conflicts?:string[];
 }
 
 /**附魔构造器 */
@@ -83,5 +72,5 @@ export type EnchCtor = {
     id  :string;
     /**附魔最大值 默认1 */
     max?:number;
-    ctor:(dm:DataManager)=>MPromise<EnchTypeData>;
+    ctor:(dm:DataManager)=>MPromise<EnchInsData[]>;
 }

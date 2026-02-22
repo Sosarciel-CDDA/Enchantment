@@ -1,5 +1,5 @@
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
-import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface";
 import { Flag, JM, Spell } from "@sosarciel-cdda/schema";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, genWieldTrigger } from "../UtilGener";
 import { RarityPoints, RarityWeight } from "../../Define";
@@ -56,7 +56,10 @@ export const ElementalBlast = {
                 {u_cast_spell:{id:tspell.id},loc:{context_val:`${ElementalBlast.id}_loc`}}
             ])
             return {
-                instance:{ ench,
+                instance:{
+                    id:ElementalBlast.id, ench,
+                    category:["weapons"],
+                    conflicts:["Elemental"],
                     weight:RarityWeight.Uncommon/list.length,
                     point :RarityPoints.Basic
                 },
@@ -64,14 +67,7 @@ export const ElementalBlast = {
             }
         });
 
-        //构造附魔集
-        const enchData:EnchTypeData={
-            id:ElementalBlast.id, instance,
-            category:["weapons"],
-            conflicts:["Elemental"],
-        };
-
         dm.addData([...data],"ench",ElementalBlast.id);
-        return enchData;
+        return instance;
     }
 } satisfies EnchCtor;

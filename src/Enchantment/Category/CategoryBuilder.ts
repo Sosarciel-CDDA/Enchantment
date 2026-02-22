@@ -1,5 +1,5 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EnchCtor, EnchTypeData } from "../EnchInterface";
+import { EnchCtor, EnchInsData } from "../EnchInterface";
 import { BoolExpr, FlagID } from "@sosarciel-cdda/schema";
 import { memoize } from "@zwa73/utils";
 
@@ -10,16 +10,16 @@ import { memoize } from "@zwa73/utils";
 const ConflictsIdx:Record<string,Set<FlagID>> = {};
 /**构造附魔类型 */
 export async function buildEnchCate(dm:DataManager,...ctorList:EnchCtor[]){
-    const resultList = await Promise.all(ctorList.map(ctor=>ctor.ctor(dm)));
+    const resultList = await Promise.all(ctorList.map(ctor=>ctor.ctor(dm))).then(v=>v.flat());
     resultList.forEach(v=>v.conflicts?.forEach(c=>{
         ConflictsIdx[c]??=new Set();
-        v.instance.forEach(lvlobj=>ConflictsIdx[c].add(lvlobj.ench.id));
+        ConflictsIdx[c].add(v.ench.id)
     }));
     return resultList;
 }
 
 /**获取冲突id */
-export const getEnchConflictsID = memoize((target:EnchTypeData)=>{
+export const getEnchConflictsID = memoize((target:EnchInsData)=>{
     const conflicts = new Set<FlagID>();
     target.conflicts?.forEach(c=>
         ConflictsIdx[c]?.forEach(id=>conflicts.add(id)));
@@ -27,6 +27,6 @@ export const getEnchConflictsID = memoize((target:EnchTypeData)=>{
 });
 
 /**获取冲突条件 物品为n */
-export const getEnchConflictsExpr = (target:EnchTypeData)=>{
+export const getEnchConflictsExpr = (target:EnchInsData)=>{
     return {or:getEnchConflictsID(target).map(id=>({npc_has_flag:id}) satisfies BoolExpr)} as BoolExpr;
 };

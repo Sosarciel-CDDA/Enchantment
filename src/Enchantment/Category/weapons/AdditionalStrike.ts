@@ -1,6 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -29,21 +29,18 @@ export const AdditionalStrike = {
             ])
             //加入输出
             return {
-                instance:{ ench,
+                instance:{
+                    id:AdditionalStrike.id, ench,
+                    category:["weapons"],
+                    conflicts:["AttackPosition"],
                     weight:[RarityWeight.Rare ,RarityWeight.Epic   ][idx],
                     point :[RarityPoints.Magic,RarityPoints.Randart][idx]
                 },
                 data:[ench,teoc]
             }
         });
-        //构造附魔集
-        const enchData:EnchTypeData={
-            id:AdditionalStrike.id, instance,
-            category:["weapons"],
-            conflicts:["AttackPosition"],
-        };
 
         dm.addData([...data],"ench",AdditionalStrike.id);
-        return enchData;
+        return instance;
     }
 } satisfies EnchCtor;

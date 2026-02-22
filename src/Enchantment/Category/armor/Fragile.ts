@@ -1,7 +1,7 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID, operaEID, RarityWeight } from "@/src/Enchantment/Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
 
@@ -39,24 +39,19 @@ export const Fragile = {
                 item_prefix:genEnchPrefix('bad',name),
             };
             return {
-                instance:{ ench, intensity:lvl+1,
+                instance:{
+                    id:Fragile.id, ench,
+                    intensity: [{id:effid,value:lvl+1}],
+                    category:["armor"],
+                    //负面附魔会附带绑定诅咒
+                    add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
+                    conflicts:["Protection"],
                     weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
                 },
                 data:[ench]
             }
         });
-
-        //构造附魔集
-        const enchData:EnchTypeData={
-            id:Fragile.id, instance,
-            intensity_effect: [effid],
-            category:["armor"],
-            //负面附魔会附带绑定诅咒
-            add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
-            conflicts:["Protection"],
-        };
-
         dm.addData([eff,...data],"ench",Fragile.id);
-        return enchData;
+        return instance;
     }
 } satisfies EnchCtor;

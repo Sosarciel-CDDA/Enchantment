@@ -1,7 +1,7 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor, EnchTypeData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -39,7 +39,11 @@ export const Protection = {
                 item_prefix:genEnchPrefix('good',name),
             };
             return {
-                instance:{ ench, intensity:lvl+1,
+                instance:{
+                    id:Protection.id,ench,
+                    category:["armor"],
+                    conflicts:["Protection"],
+                    intensity:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic ,RarityPoints.Magic][idx],
                 },
@@ -47,16 +51,7 @@ export const Protection = {
             }
         });
 
-        //构造附魔集
-        const enchData:EnchTypeData={
-            id:Protection.id,
-            instance,
-            intensity_effect: [effid],
-            category:["armor"],
-            conflicts:["Protection"],
-        };
-
         dm.addData([eff,...data],"ench",Protection.id);
-        return enchData;
+        return instance;
     }
 } satisfies EnchCtor;
