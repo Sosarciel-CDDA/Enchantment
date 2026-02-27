@@ -53,17 +53,19 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
                             }) satisfies EocEffect )
                     ]
                 }
-            }) satisfies EocEffect)
+            }) satisfies EocEffect),
+            {message:"刷新附魔缓存完成"}
         ]
     };
     dm.addInvokeEoc("WearItem"    ,0,upgradeEnchCache);
-    dm.addInvokeEoc("WieldItemRaw",0,upgradeEnchCache);
+    dm.addInvokeEoc("WieldItem"   ,0,upgradeEnchCache);//WieldItemRaw一定高于WieldItem所以为确保严格排在identifyWear后不可用
+    dm.addInvokeEoc("StowItem"    ,0,upgradeEnchCache);
     dm.addInvokeEoc("SlowUpdate"  ,0,upgradeEnchCache);
     out.push(upgradeEnchCache);
 
 
     //鉴定使用的物品 物品为 beta
-    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]}]);
+    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID]}]);
     dm.addInvokeEoc("WearItem" ,1,identifyWear);
     dm.addInvokeEoc("WieldItem",1,identifyWear);
     out.push(identifyWear);
@@ -75,11 +77,9 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
         id:EMDef.genEocID("IdentifyEnch_Init"),
         effect:[
             {run_eocs:[INIT_ENCH_DATA_EOC_ID]},
-            ...EffectActiveCondList.map(cond=>({
-                u_run_inv_eocs:"all",
-                search_data:VaildEnchCategoryList.flatMap(cate=>EnchTypeSearchDataMap[cate].search_data),
-                true_eocs:[IDENTIFY_EOC_ID]
-            }) satisfies EocEffect),
+            {u_run_inv_eocs:"all",
+            search_data:VaildEnchCategoryList.flatMap(cate=>EnchTypeSearchDataMap[cate].search_data),
+            true_eocs:[IDENTIFY_EOC_ID]}
         ]
     };
     dm.addInvokeEoc("Init",1,identifyAuto);
