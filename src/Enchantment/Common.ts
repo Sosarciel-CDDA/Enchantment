@@ -74,7 +74,7 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
         });
 
     //鉴定使用的物品 物品为 beta
-    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]}]);
+    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID,UPGRADE_ENCH_CACHE_EOC_ID]}]);
     dm.addInvokeEoc("WearItem" ,2,identifyWear);
     dm.addInvokeEoc("WieldItem",2,identifyWear);
     out.push(identifyWear);
@@ -90,7 +90,8 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
                 u_run_inv_eocs:"all",
                 search_data:VaildEnchCategoryList.map((cate)=>EnchTypeSearchDataMap[cate].search_data).flat(),
                 true_eocs:[IDENTIFY_EOC_ID]
-            }) satisfies EocEffect)
+            }) satisfies EocEffect),
+            {run_eocs:[UPGRADE_ENCH_CACHE_EOC_ID]},
         ]
     };
     dm.addInvokeEoc("Init",2,identifyAuto);
