@@ -262,7 +262,7 @@ function buildInitEnchDataEoc(enchDataList:EnchInsData[]){
     //将 cate 字符串烘焙至 n_ITEM_ENCH_TYPE 以便处理
     const initeffects:EocEffect[] = VaildEnchCategoryList.map(t=>({
         u_run_inv_eocs:"all",
-        search_data:[...EnchTypeSearchDataMap[t]],
+        search_data:EnchTypeSearchDataMap[t].search_data,
         true_eocs:{
             id:EMDef.genEocID(`initEnchData_${t}`),
             eoc_type:"ACTIVATION",
@@ -271,7 +271,9 @@ function buildInitEnchDataEoc(enchDataList:EnchInsData[]){
                 {math:[`n_${ENCH_POINT_MAX}`,"=",`${BASE_ENCH_POINT} + rand(${RAND_ENCH_POINT})`]},
                 {math:[`n_${COMPLETE_ENCH_INIT}`,"=",'1']}
             ],
-            condition:{math:[`n_${COMPLETE_ENCH_INIT}`,"!=",'1']}
+            condition:EnchTypeSearchDataMap[t].condition==undefined
+                ? {math:[`n_${COMPLETE_ENCH_INIT}`,"!=",'1']}
+                : {and:[{math:[`n_${COMPLETE_ENCH_INIT}`,"!=",'1']},EnchTypeSearchDataMap[t].condition]}
         }
     }))
     const initEnchData = EMDef.genActEoc(INIT_ENCH_DATA_EOC_ID,[

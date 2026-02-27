@@ -1,5 +1,5 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
+import { BoolExpr, EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
 import { MPromise } from "@zwa73/utils";
 
 /**可用的附魔类型 列表 */
@@ -10,10 +10,11 @@ export const VaildEnchCategoryList = [
 ] as const;
 /**可用的附魔类型 */
 export type VaildEnchCategory = typeof VaildEnchCategoryList[number];
+type CategoryCond = {search_data:ItemSearchData[],condition?:BoolExpr};
 /**附魔类型映射 */
-export const EnchTypeSearchDataMap:Record<VaildEnchCategory,ItemSearchData[]> = {
-    weapons :[{category:"weapons"}] ,
-    armor   :[{category:"armor"}]   ,
+export const EnchTypeSearchDataMap:Record<VaildEnchCategory,CategoryCond> = {
+    weapons :{search_data:[{category:"weapons"}]} ,
+    armor   :{search_data:[{category:"armor"}]}   ,
     //food    :[{flags:["EATEN_HOT"]},{flags:["SMOKABLE"]}],
 }
 
