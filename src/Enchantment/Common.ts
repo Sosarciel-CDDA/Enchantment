@@ -65,7 +65,7 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
 
 
     //鉴定使用的物品 物品为 beta
-    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID]}]);
+    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]}]);
     dm.addInvokeEoc("WearItem" ,1,identifyWear);
     dm.addInvokeEoc("WieldItem",1,identifyWear);
     out.push(identifyWear);
