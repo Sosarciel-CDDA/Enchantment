@@ -54,7 +54,6 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
                     ]
                 }
             }) satisfies EocEffect),
-            {message:"刷新附魔缓存完成"}
         ]
     };
     dm.addInvokeEoc("WearItem"    ,0,upgradeEnchCache);
