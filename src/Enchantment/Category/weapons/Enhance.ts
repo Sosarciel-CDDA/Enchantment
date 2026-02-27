@@ -2,7 +2,7 @@ import { EMDef } from "@/src/EMDefine";
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EnchCtor } from "../../EnchInterface";
 import { enchLvlID, RarityWeight } from "../../Define";
-import { createEnchLvlData, genEnchInfo, genEnchPrefix, numToRoman } from "../UtilGener";
+import { createEnchLvlData, genEnchInfo, numToRoman } from "../UtilGener";
 
 export const Enhance = {
     id:"Enhance",
@@ -31,7 +31,7 @@ export const Enhance = {
                 type:"json_flag", name,
                 id:enchLvlID(Enhance.id,lvl),
                 info:genEnchInfo("good",name,`这件物品可以提升 ${lvl*10+10}% 造成的物理伤害`),
-                item_suffix:genEnchPrefix('white',`+${lvl}`),
+                item_suffix:` <color_white>+${lvl}</color>`,
             };
 
             return {

@@ -140,6 +140,10 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             //添加附魔数据定义的副作用
             ...ins.add_effects??[],
         ],{and:[
+            //点数足够
+            {math:[`n_${ENCH_POINT_CUR} + ${ins.point??0}`,"<=",ENCH_POINT_MAX]},
+            //槽位足够
+            {math:[`n_${enchCurSlotCount(ins.enchant_slot)} + 1`,"<=",EnchSlotMaxVarMap[ins.enchant_slot]]},
             //排除冲突
             {not:getEnchConflictsExpr(ins)},
             //物品cate应被附魔cate包含
@@ -218,7 +222,7 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
             //如果命中附魔生成概率
             {if:{x_in_y_chance:{x:{math:[`${ENCH_CHANGE}`]},y:100}},
             then:[
-                {math:["_eachCount","=",`${MAX_ENCH_COUNT}`]},
+                {math:["_eachCount","=",`0`]},
                 //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
                 ...(VaildEnchCategoryList.map(cate=>{
                     const eff:EocEffect = {run_eocs:{
@@ -226,14 +230,14 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                         eoc_type:"ACTIVATION",
                         effect:[
                             {weighted_list_eocs:weightListMap[cate]},
-                            {math:["_eachCount","-=","1"]},
+                            {math:["_eachCount","+=","1"]},
                             {run_eocs:`${subeocid}_${cate}` as EocID}
                         ],
-                        condition:{and:[
-                            {math:["_eachCount",">",`0`]},
-                            {math:[`n_${ENCH_POINT_CUR}`,"<",`n_${ENCH_POINT_MAX}`]},
-                            {or:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'<',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
-                        ]}
+                        condition:{not:{or:[
+                            {math:["_eachCount",">",MAX_ENCH_COUNT]},
+                            {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
+                            {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
+                        ]}}
                     }}
                     return eff;
                 })),
