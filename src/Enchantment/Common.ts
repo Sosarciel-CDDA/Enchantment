@@ -44,39 +44,28 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
                             .map(ins=>({
                                 if:{npc_has_flag:ins.flag.id},
                                 then:[...formatArray(ins.effect).map(eff => ({math:[enchInsVar(eff.id,"u"),"+=",`${eff.value}`]}) satisfies EocEffect)]
-                            }) satisfies EocEffect)]
+                            }) satisfies EocEffect),
+                        //根据缓存添加效果
+                        ... enchEffIdlist.map(effid => ({
+                                if:{math:[enchInsVar(effid,"u"),">=","1"]},
+                                then:[{u_add_effect:effid,intensity:{math:[enchInsVar(effid,"u")]},duration:"PERMANENT"}],
+                                else:[{u_lose_effect:effid}]
+                            }) satisfies EocEffect )
+                    ]
                 }
             }) satisfies EocEffect)
         ]
     };
-    dm.addInvokeEoc("WearItem"    ,1,upgradeEnchCache);
-    dm.addInvokeEoc("WieldItemRaw",1,upgradeEnchCache);
-    dm.addInvokeEoc("SlowUpdate"  ,1,upgradeEnchCache);
+    dm.addInvokeEoc("WearItem"    ,0,upgradeEnchCache);
+    dm.addInvokeEoc("WieldItemRaw",0,upgradeEnchCache);
+    dm.addInvokeEoc("SlowUpdate"  ,0,upgradeEnchCache);
     out.push(upgradeEnchCache);
 
-    //根据缓存添加效果
-    enchDataList
-        .filter(ench=>ench.effect!=null)
-        .forEach(ench=>{
-            const intensity = formatArray(ench.effect)
-            intensity.forEach(eff=>{
-                //触发eoc
-                const teoc = EMDef.genActEoc(`${ench.id}_${ench.flag.id}_UpdateEffect`,[
-                    {if:{math:[enchInsVar(eff.id,"u"),">=","1"]},
-                    then:[{u_add_effect:eff.id,intensity:{math:[enchInsVar(eff.id,"u")]},duration:"PERMANENT"}],
-                    else:[{u_lose_effect:eff.id}]}
-                ]);
-                dm.addInvokeEoc("WearItem"    ,0,teoc);
-                dm.addInvokeEoc("WieldItemRaw",0,teoc);
-                dm.addInvokeEoc("SlowUpdate"  ,0,teoc);
-                out.push(teoc);
-            })
-        });
 
     //鉴定使用的物品 物品为 beta
-    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID,UPGRADE_ENCH_CACHE_EOC_ID]}]);
-    dm.addInvokeEoc("WearItem" ,2,identifyWear);
-    dm.addInvokeEoc("WieldItem",2,identifyWear);
+    const identifyWear = EMDef.genActEoc("IdentifyEnch_Use",[{run_eocs:[INIT_ENCH_DATA_EOC_ID,IDENTIFY_EOC_ID]}]);
+    dm.addInvokeEoc("WearItem" ,1,identifyWear);
+    dm.addInvokeEoc("WieldItem",1,identifyWear);
     out.push(identifyWear);
 
     //初始化鉴定已穿着的物品
@@ -88,13 +77,12 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
             {run_eocs:[INIT_ENCH_DATA_EOC_ID]},
             ...EffectActiveCondList.map(cond=>({
                 u_run_inv_eocs:"all",
-                search_data:VaildEnchCategoryList.map((cate)=>EnchTypeSearchDataMap[cate].search_data).flat(),
+                search_data:VaildEnchCategoryList.flatMap(cate=>EnchTypeSearchDataMap[cate].search_data),
                 true_eocs:[IDENTIFY_EOC_ID]
             }) satisfies EocEffect),
-            {run_eocs:[UPGRADE_ENCH_CACHE_EOC_ID]},
         ]
     };
-    dm.addInvokeEoc("Init",2,identifyAuto);
+    dm.addInvokeEoc("Init",1,identifyAuto);
     out.push(identifyAuto);
     //dm.addInvokeEoc("EatItem"  ,2,identifyWear);
 
@@ -142,7 +130,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             ...ins.add_effects??[],
         ],{and:[
             //点数足够
-            {math:[`n_${ENCH_POINT_CUR} + ${ins.point??0}`,"<=",ENCH_POINT_MAX]},
+            {math:[`n_${ENCH_POINT_CUR} + ${ins.point??0}`,"<=",`n_${ENCH_POINT_MAX}`]},
             //槽位足够
             {math:[`n_${enchCurSlotCount(ins.enchant_slot)} + 1`,"<=",EnchSlotMaxVarMap[ins.enchant_slot]]},
             //排除冲突
@@ -235,8 +223,11 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                             {run_eocs:`${subeocid}_${cate}` as EocID}
                         ],
                         condition:{not:{or:[
+                            //次数超过尝试次数
                             {math:["_eachCount",">",MAX_ENCH_COUNT]},
+                            //点数已满
                             {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
+                            //所有槽位已满
                             {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
                         ]}}
                     }}
