@@ -88,7 +88,7 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
             {run_eocs:[INIT_ENCH_DATA_EOC_ID]},
             ...EffectActiveCondList.map(cond=>({
                 u_run_inv_eocs:"all",
-                search_data:EffectActiveCondSearchDataMap[cond],
+                search_data:VaildEnchCategoryList.map((cate)=>EnchTypeSearchDataMap[cate].search_data).flat(),
                 true_eocs:[IDENTIFY_EOC_ID]
             }) satisfies EocEffect)
         ]

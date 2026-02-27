@@ -52,7 +52,7 @@ export async function buildIdentifySpell(dm:DataManager){
     const selIdentifyEoc = EMDef.genActEoc("SelIdentify",[
         {run_eocs:INIT_ENCH_DATA_EOC_ID},
         {u_run_inv_eocs:"manual",
-        search_data:VaildEnchCategoryList.map((cate)=>EnchTypeSearchDataMap[cate]).flat(),
+        search_data:VaildEnchCategoryList.map((cate)=>EnchTypeSearchDataMap[cate].search_data).flat(),
         title:"选择要鉴定的物品",
         true_eocs:IDENTIFY_EOC_ID},
     ])

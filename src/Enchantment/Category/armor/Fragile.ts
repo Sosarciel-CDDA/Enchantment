@@ -23,7 +23,7 @@ export const Fragile = {
                 condition:"ALWAYS",
                 incoming_damage_mod_post_absorbed:dt.map(type=>(
                     {type,multiply:{math:[`u_effect_intensity('${effid}') * 0.1`]}}
-                ))
+                )),
             }]
         }
 
