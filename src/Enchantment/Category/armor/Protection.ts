@@ -43,6 +43,7 @@ export const Protection = {
                     id:Protection.id,flag,
                     category:["armor"],
                     conflicts:["Protection"],
+                    enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic ,RarityPoints.Magic][idx],

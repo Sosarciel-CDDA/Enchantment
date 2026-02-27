@@ -1,5 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
+import { EnchSlot } from "./EnchInterface";
 
 
 /**基础附魔点数
@@ -16,6 +17,21 @@ export const RAND_ENCH_POINT = "RandEnchPoint";
  * 变量名
  */
 export const MAX_ENCH_COUNT = "MaxEnchCount";
+
+/**最大前缀附魔量
+ * 变量名
+ */
+export const MAX_PREFIX_ENCH_COUNT = "MaxPrefixEnchCount";
+
+/**最大后缀附魔量
+ * 变量名
+ */
+export const MAX_SUFFIX_ENCH_COUNT = "MaxSuffixEnchCount";
+
+/**最大隐含附魔量
+ * 变量名
+ */
+export const MAX_HIDE_ENCH_COUNT = "MaxHideEnchCount";
 
 /**附魔物品生成百分概率
  * 变量名
@@ -63,6 +79,9 @@ export const enchInsVar = (ench:EffectID,t:"u"|"n")=>`${t}_${ench}_CacheValue`;
 
 /**附魔的等级flagID */
 export const enchLvlID = (baseID:string,lvl:number)=> EMDef.genFlagID(`${baseID}_${lvl}_Ench`);
+
+/**当前附魔占用槽位数量 */
+export const enchCurSlotCount = (slot:EnchSlot)=>`${slot}_CurrCount`;
 
 /**鉴定EocID  
  * 对 beta 进行鉴定  

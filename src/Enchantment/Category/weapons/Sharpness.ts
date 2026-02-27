@@ -41,6 +41,7 @@ export const Sharpness = {
                     id:Sharpness.id,flag,
                     category:["weapons"],
                     conflicts:["Sharpness"],
+                    enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare][idx],
                     point :[RarityPoints.Basic,RarityPoints.Magic][idx],

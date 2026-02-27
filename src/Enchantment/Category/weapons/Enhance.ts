@@ -39,6 +39,7 @@ export const Enhance = {
                     id:Enhance.id,flag,
                     category:["weapons" as const],
                     conflicts:["Enhance"],
+                    enchant_slot:'suffix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:RarityWeight.Common/lvl,
                 },

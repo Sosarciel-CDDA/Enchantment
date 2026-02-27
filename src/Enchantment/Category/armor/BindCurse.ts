@@ -19,12 +19,13 @@ export const BindCurse = {
         const enchData:EnchInsData={
             id:BindCurse.id, flag,
             category:["armor"],
+            enchant_slot:'prefix',
             add_effects:[
                 {npc_set_flag:"INTEGRATED"},
                 {u_message:"你从一件装备上发现了绑定诅咒",type:"bad"},
             ],
             remove_effects:[{npc_unset_flag:"INTEGRATED"}],
-            is_curse:true
+            is_curse:true,
         };
 
         dm.addData([flag],"ench",BindCurse.id);

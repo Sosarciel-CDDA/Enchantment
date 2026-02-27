@@ -1,9 +1,9 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchTypeSearchDataMap, VaildEnchCategory, VaildEnchCategoryList } from "./EnchInterface";
+import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchSlotList, EnchSlotMaxVarMap, EnchTypeSearchDataMap, VaildEnchCategory, VaildEnchCategoryList } from "./EnchInterface";
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
-import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT, formatArray } from "./Define";
+import { BoolExpr, Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
+import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT, formatArray, enchCurSlotCount } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -61,7 +61,7 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
             const intensity = formatArray(ench.effect)
             intensity.forEach(eff=>{
                 //触发eoc
-                const teoc = EMDef.genActEoc(`${ench.id}_UpdateEffect`,[
+                const teoc = EMDef.genActEoc(`${ench.id}_${ench.flag.id}_UpdateEffect`,[
                     {if:{math:[enchInsVar(eff.id,"u"),">=","1"]},
                     then:[{u_add_effect:eff.id,intensity:{math:[enchInsVar(eff.id,"u")]},duration:"PERMANENT"}],
                     else:[{u_lose_effect:eff.id}]}
@@ -136,6 +136,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             ... (ins.is_curse ? [{npc_set_flag:IS_CURSED_FLAG_ID}]:[]),
             //增加附魔点数
             {math:[`n_${ENCH_POINT_CUR}`,"+=",`${ins.point}`]},
+            {math:[`n_${enchCurSlotCount(ins.enchant_slot)}`,"+=",`1`]},
             //添加附魔数据定义的副作用
             ...ins.add_effects??[],
         ],{and:[
@@ -160,6 +161,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             {npc_unset_flag:ins.flag.id},
             //减少附魔点数
             {math:[`n_${ENCH_POINT_CUR}`,"-=",`${ins.point}`]},
+            {math:[`n_${enchCurSlotCount(ins.enchant_slot)}`,"-=",`${ins.point}`]},
             //添加附魔数据定义的副作用
             ...ins.remove_effects??[],
         ],{npc_has_flag:ins.flag.id},true)
@@ -229,7 +231,8 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                         ],
                         condition:{and:[
                             {math:["_eachCount",">",`0`]},
-                            {math:[`n_${ENCH_POINT_CUR}`,"<",`n_${ENCH_POINT_MAX}`]}
+                            {math:[`n_${ENCH_POINT_CUR}`,"<",`n_${ENCH_POINT_MAX}`]},
+                            {or:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'<',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
                         ]}
                     }}
                     return eff;

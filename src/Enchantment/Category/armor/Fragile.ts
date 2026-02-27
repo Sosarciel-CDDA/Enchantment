@@ -43,6 +43,7 @@ export const Fragile = {
                     id:Fragile.id, flag,
                     effect: [{id:effid,value:lvl+1}],
                     category:["armor"],
+                    enchant_slot:'prefix',
                     //负面附魔会附带绑定诅咒
                     add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
                     conflicts:["Protection"],

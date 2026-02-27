@@ -33,8 +33,9 @@ export const AdditionalStrike = {
                     id:AdditionalStrike.id, flag,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
+                    enchant_slot:'prefix',
                     weight:[RarityWeight.Rare ,RarityWeight.Epic   ][idx],
-                    point :[RarityPoints.Magic,RarityPoints.Randart][idx]
+                    point :[RarityPoints.Magic,RarityPoints.Randart][idx],
                 },
                 data:[flag,teoc]
             }

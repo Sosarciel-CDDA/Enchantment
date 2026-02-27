@@ -60,6 +60,7 @@ export const ElementalBlast = {
                     id:ElementalBlast.id, flag,
                     category:["weapons"],
                     conflicts:["Elemental"],
+                    enchant_slot:'prefix',
                     weight:RarityWeight.Uncommon/list.length,
                     point :RarityPoints.Basic
                 },

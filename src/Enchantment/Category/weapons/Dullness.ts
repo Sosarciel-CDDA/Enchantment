@@ -42,6 +42,7 @@ export const Dullness = {
                     id:Dullness.id, flag,
                     category:["weapons"] as const,
                     conflicts:["Sharpness"],
+                    enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
                 },

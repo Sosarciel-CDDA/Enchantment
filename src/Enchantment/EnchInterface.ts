@@ -1,6 +1,7 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { BoolExpr, EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
 import { MPromise } from "@zwa73/utils";
+import { MAX_HIDE_ENCH_COUNT, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT } from "./Define";
 
 /**可用的附魔类型 列表 */
 export const VaildEnchCategoryList = [
@@ -33,6 +34,14 @@ export const EffectActiveCondSearchDataMap:Record<EffectActiveCond,ItemSearchDat
 }
 
 export type EnchEffect = {id:EffectID,value:number};
+
+export const EnchSlotMaxVarMap:Record<EnchSlot,string> = {
+    prefix:MAX_PREFIX_ENCH_COUNT,
+    suffix:MAX_SUFFIX_ENCH_COUNT,
+    hide  :MAX_HIDE_ENCH_COUNT
+} as const;
+export const EnchSlotList = ['prefix','suffix','hide'] as const;
+export type EnchSlot = typeof EnchSlotList[number];
 /**附魔类型中的某个实例的数据 */
 export type EnchInsData = {
     /**id */
@@ -57,6 +66,8 @@ export type EnchInsData = {
      * 默认false  
      */
     is_curse?:boolean;
+    /**附魔槽位 */
+    enchant_slot:EnchSlot;
     /**限制类型 */
     category:VaildEnchCategory[];
     /**强度生效方式 undefined时为全部 */

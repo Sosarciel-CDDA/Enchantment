@@ -48,6 +48,7 @@ export const Knockback = {
                     id:Knockback.id, flag,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
+                    enchant_slot:'prefix',
                     weight:[RarityWeight.Uncommon,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic   ,RarityPoints.Magic][idx]
                 },

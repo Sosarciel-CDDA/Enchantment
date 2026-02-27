@@ -58,6 +58,7 @@ export const ElementalStrike = {
                     id:ElementalStrike.id, flag,
                     category:["weapons"],
                     conflicts:["Elemental"],
+                    enchant_slot:'prefix',
                     weight:RarityWeight.Common/list.length,
                     point :RarityPoints.Basic
                 },
