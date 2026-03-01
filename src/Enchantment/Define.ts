@@ -100,7 +100,10 @@ export const UPGRADE_ENCH_CACHE_EOC_ID = EMDef.genEocID("UpgradeEnchCache");
 export const INIT_ENCH_DATA_EOC_ID = EMDef.genEocID("InitEnchData");
 /**移除诅咒EocID */
 export const REMOVE_CURSE_EOC_ID = EMDef.genEocID("RemoveCurse");
-
+/**创建别名EocID */
+export const CREATE_ALIAS_EOC_ID = EMDef.genEocID("CreateAlias");
+/**创建别名EocID 的结果值变量名 */
+export const AliasResult = "AliasResult";
 
 /**稀有度权重 */
 export const RarityWeight = {

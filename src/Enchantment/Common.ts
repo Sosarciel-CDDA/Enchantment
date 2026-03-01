@@ -3,7 +3,7 @@ import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchS
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
 import { BoolExpr, Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT, formatArray, enchCurSlotCount } from "./Define";
+import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -234,6 +234,9 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                 })),
                 {u_message:"你从一件装备上发现了附魔",type:"good"},
                 {npc_set_flag:IS_ENCHED_FLAG_ID},
+                //生成别名
+                {run_eocs:[CREATE_ALIAS_EOC_ID]},
+                {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}},
             ]},
             {u_message:"一件装备的详细属性被揭示了",type:"good"},
             {npc_set_flag:IS_IDENTIFYED_FLAG_ID},
