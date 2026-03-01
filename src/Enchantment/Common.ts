@@ -226,14 +226,22 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                         {math:[`n_${ENCH_RARE_CUR}`,'=',`${lvl}`]},
                         {math:[`n_${ENCH_POINT_MAX}`,"=",`${pointVar}`]},
                         {npc_set_flag:rareFlagMap[key].id},
+
+                        //神话以上生成别名
+                        ...(lvl>=3?[
+                            {run_eocs:[CREATE_ALIAS_EOC_ID]},
+                            {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}, parse_tags:true},
+                        ]:[]),
                     ]
                 },{math:[weightVar]} satisfies NumberExpr])},
 
                 //初始化附魔尝试次数
                 {math:["_eachCount","=",`0`]},
                 //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
-                ...(VaildEnchCategoryList.map(cate=>({
-                    if:{not:{or:[
+                ...(VaildEnchCategoryList.map(cate=>({run_eocs:{
+                    id:`${subeocid}_${cate}` as EocID,
+                    eoc_type:"ACTIVATION",
+                    condition:{not:{or:[
                         //次数超过尝试次数
                         {math:["_eachCount",">",MAX_ENCH_COUNT]},
                         //点数已满
@@ -241,15 +249,12 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                         //所有槽位已满
                         {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
                     ]}},
-                    then:[
+                    effect:[
                         {weighted_list_eocs:weightListMap[cate]},
                         {math:["_eachCount","+=","1"]},
-                        {run_eocs:`${subeocid}_${cate}` as EocID}
-                    ]
-                }) satisfies EocEffect)),
-                //生成别名
-                {run_eocs:[CREATE_ALIAS_EOC_ID]},
-                {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}, parse_tags:true},
+                        {run_eocs:`${subeocid}_${cate}` as EocID} //调用自身递归
+                    ],
+                }}) satisfies EocEffect)),
             ]},
             {u_message:"一件装备的详细属性被揭示了",type:"good"},
             {npc_set_flag:IS_IDENTIFYED_FLAG_ID},
