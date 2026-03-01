@@ -236,7 +236,7 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
                 {npc_set_flag:IS_ENCHED_FLAG_ID},
                 //生成别名
                 {run_eocs:[CREATE_ALIAS_EOC_ID]},
-                {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}},
+                {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}, parse_tags:true},
             ]},
             {u_message:"一件装备的详细属性被揭示了",type:"good"},
             {npc_set_flag:IS_IDENTIFYED_FLAG_ID},
