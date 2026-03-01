@@ -2,17 +2,7 @@ import { EMDef } from "@/src/EMDefine";
 import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
 import { EnchSlot } from "./EnchInterface";
 
-
-/**基础附魔点数
- * 变量名
- */
-export const BASE_ENCH_POINT = "BaseEnchPoint";
-
-/**随机附魔点数
- * 变量名
- */
-export const RAND_ENCH_POINT = "RandEnchPoint";
-
+//#region 需初始化变量
 /**最大附魔尝试次数
  * 变量名
  */
@@ -37,6 +27,15 @@ export const MAX_HIDE_ENCH_COUNT = "MaxHideEnchCount";
  * 变量名
  */
 export const ENCH_CHANGE    = "EnchChange";
+//#endregion
+
+/**附魔稀有度数值枚举 */
+export const RareEnum = {
+    Magic  :{lvl:1,weightVar:"RandartWeight",pointVar:"RandartPoint",name:"魔法物品"  },
+    Epic   :{lvl:2,weightVar:"EpicWeight"   ,pointVar:"EpicPoint"   ,name:"奇迹物品"  },
+    Randart:{lvl:3,weightVar:"MagicWeight"  ,pointVar:"MagicPoint"  ,name:"神话物品"  },
+}
+
 
 /**空附魔 one_in 概率 */
 export const ENCH_EMPTY_IN  = 10;
@@ -53,6 +52,10 @@ export const ENCH_POINT_CUR = "EnchPoint";
  * 变量名
  */
 export const ENCH_POINT_MAX = "EnchPointMax";
+/**物品附魔稀有度
+ * 变量名
+ */
+export const ENCH_RARE_CUR = "EnchRare";
 /**表示物品的附魔类型 需初始化
  * 变量名
  */
@@ -62,8 +65,6 @@ export const ITEM_ENCH_TYPE = "ItemEnchType";
 export const IS_CURSED_FLAG_ID     = EMDef.genFlagID("IS_CURSED");
 /**表示物品是被鉴定过的 需鉴定 */
 export const IS_IDENTIFYED_FLAG_ID = EMDef.genFlagID("IS_IDENTIFYED");
-/**表示物品是含有附魔 需鉴定 */
-export const IS_ENCHED_FLAG_ID     = EMDef.genFlagID("IS_ENCHED");
 
 /**辅助eoc的id 对 beta 增减某个附魔 */
 export function operaEID(flag:Flag|FlagID,t:"add"|"remove"){
@@ -105,7 +106,7 @@ export const CREATE_ALIAS_EOC_ID = EMDef.genEocID("CreateAlias");
 /**创建别名EocID 的结果值变量名 */
 export const AliasResult = "AliasResult";
 
-/**稀有度权重 */
+/**权重分级 */
 export const RarityWeight = {
     /**比标准更常见的制式品 */
     Poor       :360,
@@ -118,7 +119,7 @@ export const RarityWeight = {
     /**史诗 如 追加打击II */
     Epic       :80 ,
 }
-/**稀有度点数 */
+/**稀有度分级 */
 export const RarityPoints = {
     /**比基础更常见的制式品 */
     Crude  :30,

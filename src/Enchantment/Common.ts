@@ -3,7 +3,7 @@ import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchS
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
 import { BoolExpr, Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_ENCHED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, BASE_ENCH_POINT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, RAND_ENCH_POINT, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID } from "./Define";
+import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID, ENCH_RARE_CUR, RareEnum } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -100,14 +100,7 @@ export async function buildCommon(dm:DataManager,enchDataList:EnchInsData[]) {
         name:"完成鉴定",
         info:`<good>[完成鉴定]</good> 你已经了解了这件物品的详情`
     }
-    //表示物品含有附魔属性的flag
-    const enchedFlag:Flag={
-        type:"json_flag",
-        id:IS_ENCHED_FLAG_ID,
-        name:"魔法物品",
-        info:`<good>[魔法物品]</good> 这件物品被附魔了`
-    }
-    out.push(cursedFlag,identedFlag,enchedFlag);
+    out.push(cursedFlag,identedFlag);
 
     dm.addData(out,"Common");
 }
@@ -167,6 +160,20 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
 
 /**生成鉴定eoc */
 function buildIdentifyEoc(enchDataList:EnchInsData[]){
+
+
+    //表示物品含有附魔属性的flag
+    const rareFlagMap = Object.entries(RareEnum).reduce((acc,[key,{name}])=>({
+        ...acc,
+        [key]:{
+            type:"json_flag",
+            id:EMDef.genFlagID(`EnchantItem_${key}`),
+            name:name,
+            info:`<good>[${name}]</good> 这是一件${name}`
+        } satisfies Flag,
+    }),{} as Record<string,Flag>);
+    const rareFlagList = Object.values(rareFlagMap);
+
     //空附魔Eoc
     const noneEnchEoc = EMDef.genActEoc("NoneEnch",[]);
 
@@ -183,11 +190,11 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
         const noneWeight  = weightSum/ENCH_EMPTY_IN;
         //将空eoc加入表单
         weightListMap[cate] = [
-            [noneEnchEoc.id,{math:[`${noneWeight}`]}],
+            [noneEnchEoc.id,noneWeight],
             ... enchDataList //遍历所有附魔
                 .filter(ench=>ench.category.includes(cate))
                 .filter(ins=>(ins.weight??0)>0)
-                .map(ins=>[operaEID(ins.flag,"add"),{math:[`${(ins.weight ?? 0)}`]}] satisfies [EocID,NumberExpr])
+                .map(ins=>[operaEID(ins.flag,"add"),ins.weight ?? 0] satisfies [EocID,NumberExpr])
         ];
     }
 
@@ -210,30 +217,36 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
             //如果命中附魔生成概率
             {if:{x_in_y_chance:{x:{math:[`${ENCH_CHANGE}`]},y:100}},
             then:[
+                //创建稀有度
+                {weighted_list_eocs:Object.entries(RareEnum).map(([key,{lvl,name,weightVar,pointVar}])=>[{
+                    id:EMDef.genEocID(`IdentifyEnch_${key}`),
+                    eoc_type:"ACTIVATION",
+                    effect:[
+                        {u_message:`你发现了一件${name}`,type:"good"},
+                        {math:[`n_${ENCH_RARE_CUR}`,'=',`${lvl}`]},
+                        {math:[`n_${ENCH_POINT_MAX}`,"=",`${pointVar}`]},
+                        {npc_set_flag:rareFlagMap[key].id},
+                    ]
+                },{math:[weightVar]} satisfies NumberExpr])},
+
+                //初始化附魔尝试次数
                 {math:["_eachCount","=",`0`]},
                 //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
-                ...(VaildEnchCategoryList.map(cate=>{
-                    const eff:EocEffect = {run_eocs:{
-                        id:`${subeocid}_${cate}` as EocID,
-                        eoc_type:"ACTIVATION",
-                        effect:[
-                            {weighted_list_eocs:weightListMap[cate]},
-                            {math:["_eachCount","+=","1"]},
-                            {run_eocs:`${subeocid}_${cate}` as EocID}
-                        ],
-                        condition:{not:{or:[
-                            //次数超过尝试次数
-                            {math:["_eachCount",">",MAX_ENCH_COUNT]},
-                            //点数已满
-                            {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
-                            //所有槽位已满
-                            {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
-                        ]}}
-                    }}
-                    return eff;
-                })),
-                {u_message:"你从一件装备上发现了附魔",type:"good"},
-                {npc_set_flag:IS_ENCHED_FLAG_ID},
+                ...(VaildEnchCategoryList.map(cate=>({
+                    if:{not:{or:[
+                        //次数超过尝试次数
+                        {math:["_eachCount",">",MAX_ENCH_COUNT]},
+                        //点数已满
+                        {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
+                        //所有槽位已满
+                        {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
+                    ]}},
+                    then:[
+                        {weighted_list_eocs:weightListMap[cate]},
+                        {math:["_eachCount","+=","1"]},
+                        {run_eocs:`${subeocid}_${cate}` as EocID}
+                    ]
+                }) satisfies EocEffect)),
                 //生成别名
                 {run_eocs:[CREATE_ALIAS_EOC_ID]},
                 {set_string_var:`<npc_name> 『<global_val:AliasResult>』`,target_var:{npc_val:'name'}, parse_tags:true},
@@ -243,7 +256,7 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
         ]
     }
 
-    return [identifyEnchEoc,noneEnchEoc];
+    return [identifyEnchEoc,noneEnchEoc,...rareFlagList];
 }
 
 /**生成移除诅咒eoc */
@@ -269,7 +282,6 @@ function buildInitEnchDataEoc(enchDataList:EnchInsData[]){
             eoc_type:"ACTIVATION",
             effect:[
                 {npc_add_var:ITEM_ENCH_TYPE,value:t},
-                {math:[`n_${ENCH_POINT_MAX}`,"=",`${BASE_ENCH_POINT} + rand(${RAND_ENCH_POINT})`]},
                 {math:[`n_${COMPLETE_ENCH_INIT}`,"=",'1']}
             ],
             condition:EnchTypeSearchDataMap[t].condition==undefined
