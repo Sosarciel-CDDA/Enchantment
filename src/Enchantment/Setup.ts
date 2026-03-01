@@ -1,88 +1,27 @@
-import { Eoc, JM, Mutation, TalkTopic } from "@sosarciel-cdda/schema";
+import { Eoc, JM } from "@sosarciel-cdda/schema";
 import { EMDef } from "../EMDefine";
 import { ENCH_CHANGE, MAX_ENCH_COUNT, BASE_ENCH_POINT, RAND_ENCH_POINT, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT, MAX_HIDE_ENCH_COUNT } from "./Define";
-import { DataManager } from "@sosarciel-cdda/event";
+import { DataManager, setupCtor } from "@sosarciel-cdda/event";
 import { RemoveCurseSpellID } from "./RemoveCurseSpell";
 import { IdentifySpellID } from "./IdentifySpell";
 
 
 
 //#region 初始化
-const defSetupEoc:Eoc = {
-    id:EMDef.genEocID(`DefaultSetup`),
-    type:"effect_on_condition",
-    eoc_type:"ACTIVATION",
-    effect:[
-        { math:[ENCH_CHANGE     ,'=',`10` ] },
-        { math:[BASE_ENCH_POINT ,'=',`100`] },
-        { math:[RAND_ENCH_POINT ,'=',`100`] },
-        { math:[MAX_ENCH_COUNT  ,'=',`10` ] },
-        { math:[MAX_PREFIX_ENCH_COUNT ,'=',`1` ] },
-        { math:[MAX_SUFFIX_ENCH_COUNT ,'=',`1` ] },
-        { math:[MAX_HIDE_ENCH_COUNT   ,'=',`2` ] },
-    ]
-}
-const customSetupEoc:Eoc = {
-    id:EMDef.genEocID(`CustomSetup`),
-    type:"effect_on_condition",
-    eoc_type:"ACTIVATION",
-    effect:[
-        { math:[ENCH_CHANGE     ,'=',JM.numInput(`'${ENCH_CHANGE} 附魔物品的生成几率, 100为100%'`,10)] },
-        { math:[BASE_ENCH_POINT ,'=',JM.numInput(`'${BASE_ENCH_POINT} 附魔物品生成时的基础点数, 越高则单个物品的附魔强度越高'`,100)] },
-        { math:[RAND_ENCH_POINT ,'=',JM.numInput(`'${RAND_ENCH_POINT} 附魔物品生成时的最大随机点数, 越高则单个物品的附魔强度越高'`,100)] },
-        { math:[MAX_ENCH_COUNT  ,'=',JM.numInput(`'${MAX_ENCH_COUNT} 附魔物品生成时的尝试次数, 越高越容易充满点数'`,10)] },
-        { math:[MAX_PREFIX_ENCH_COUNT ,'=',JM.numInput(`'${MAX_PREFIX_ENCH_COUNT} 最大前缀附魔数量'`,1)] },
-        { math:[MAX_SUFFIX_ENCH_COUNT ,'=',JM.numInput(`'${MAX_SUFFIX_ENCH_COUNT} 最大后缀附魔数量'`,1)] },
-        { math:[MAX_HIDE_ENCH_COUNT   ,'=',JM.numInput(`'${MAX_HIDE_ENCH_COUNT} 最大隐藏附魔数量'`,2)] },
-    ]
-}
-const setMutId = EMDef.genMutationID(`Setup`);
-const setupTopic = {
-    id:EMDef.genTalkTopicID(`SetupTopic`),
-    type:'talk_topic',
-    dynamic_line:
-        `&对附魔的功能进行设置 当前:\n` +
-        `${ENCH_CHANGE} : <global_val:${ENCH_CHANGE}>\n` +
-        `${BASE_ENCH_POINT} : <global_val:${BASE_ENCH_POINT}>\n` +
-        `${RAND_ENCH_POINT} : <global_val:${RAND_ENCH_POINT}>\n` +
-        `${MAX_ENCH_COUNT} : <global_val:${MAX_ENCH_COUNT}>\n` +
-        `${MAX_PREFIX_ENCH_COUNT} : <global_val:${MAX_PREFIX_ENCH_COUNT}>\n` +
-        `${MAX_SUFFIX_ENCH_COUNT} : <global_val:${MAX_SUFFIX_ENCH_COUNT}>\n` +
-        `${MAX_HIDE_ENCH_COUNT} : <global_val:${MAX_HIDE_ENCH_COUNT}>`,
-    responses:[
-        {topic: "TALK_DONE",text:"不做改变"    ,condition:{u_has_trait:setMutId}},
-        {topic: "TALK_DONE",text:"使用默认设置",effect:{run_eocs:[defSetupEoc.id]}},
-        {topic: "TALK_DONE",text:"自定义设置"  ,effect:{run_eocs:[customSetupEoc.id]}},
-    ]
-} satisfies TalkTopic;
-const openSettingEoc:Eoc = {
-    id:EMDef.genEocID(`OpenSetting`),
-    type:"effect_on_condition",
-    eoc_type:"ACTIVATION",
-    effect:[{open_dialogue:{topic:setupTopic.id}}]
-}
-const setupMut: Mutation = {
-    id: setMutId,
-    type: "mutation",
-    name: `附魔设置`,
-    description: `附魔设置`,
-    points: 0, purifiable: false, valid: false, active: true,
-    activated_eocs: [openSettingEoc.id],
-};
-const setupEoc:Eoc = {
-    id:EMDef.genEocID(`Setup`),
-    type:"effect_on_condition",
-    eoc_type:"RECURRING",
-    recurrence:1,
-    global:true,
-    run_for_npcs:false,
-    condition:{and:['u_is_avatar',{not:{u_has_trait:setMutId}}]},
-    deactivate_condition:{or:[{u_has_trait:setMutId},{not:'u_is_avatar'}]},
-    effect:[
-        { run_eocs:[openSettingEoc.id] },
-        { u_add_trait:setMutId },
+const setuplist = setupCtor({
+    table:[
+        {var:ENCH_CHANGE           ,desc:'附魔物品的生成几率, 100为100%',def:'10' },
+        {var:BASE_ENCH_POINT       ,desc:'附魔物品生成时的基础点数, 越高则单个物品的附魔强度越高',def:'100'},
+        {var:RAND_ENCH_POINT       ,desc:'附魔物品生成时的最大随机点数, 越高则单个物品的附魔强度越高',def:'100'},
+        {var:MAX_ENCH_COUNT        ,desc:'附魔物品生成时的尝试次数, 越高越容易充满点数',def:'10' },
+        {var:MAX_PREFIX_ENCH_COUNT ,desc:'最大前缀附魔数量',def:'1' },
+        {var:MAX_SUFFIX_ENCH_COUNT ,desc:'最大后缀附魔数量',def:'1' },
+        {var:MAX_HIDE_ENCH_COUNT   ,desc:'最大隐藏附魔数量',def:'2' },
     ],
-}
+    prefix:EMDef.MOD_PREFIX,
+    message:'对附魔的功能进行设置',
+    menuName:'附魔设置',
+});
 const initEoc:Eoc = {
     id:EMDef.genEocID(`Init`),
     type:"effect_on_condition",
@@ -97,5 +36,5 @@ const initEoc:Eoc = {
 
 export const buildSetup = (dm:DataManager)=>{
     dm.addInvokeID('GameStart',0,initEoc.id);
-    dm.addData([initEoc,defSetupEoc,customSetupEoc,setupTopic,openSettingEoc,setupMut,setupEoc],'Setup');
+    dm.addData([initEoc,...setuplist],'Setup');
 }
