@@ -15,6 +15,7 @@
   "dependencies": {
     "@sosarciel-cdda/event": "^1.0.0",
     "@sosarciel-cdda/schema": "^1.0.0",
-    "@zwa73/utils": "*"
+    "@zwa73/utils": "*",
+    "csv-parse": "^6.1.0"
   }
 }

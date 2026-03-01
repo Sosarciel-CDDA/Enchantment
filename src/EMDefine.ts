@@ -1,10 +1,13 @@
 import { ModDefine } from "@sosarciel-cdda/schema";
+import path from "pathe";
 
 
 /**mod物品前缀 */
 export const MOD_PREFIX = "CENCH";
 
 export const EMDef = new ModDefine(MOD_PREFIX);
+export const ROOT_DIR = path.join(__dirname,'..');
+export const DATA_DIR = path.join(ROOT_DIR,'data');
 
 /**默认的最大数值 */
 export const MAX_NUM = 1000000;
