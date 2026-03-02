@@ -44,6 +44,10 @@ export const EnchSlotList = ['prefix','suffix','hide'] as const;
 export type EnchSlot = typeof EnchSlotList[number];
 /**附魔类型中的某个实例的数据 */
 export type EnchInsData = {
+    /**附魔点数  
+     * 未定义则为0  
+     */
+    point?:number;
     /**随机权重 */
     weight?:number;
     /**添加时会执行的effect */
@@ -54,10 +58,6 @@ export type EnchInsData = {
      * 未定义则不计入缓存
      */
     effect?:EnchEffect[]|EnchEffect;
-    /**附魔点数  
-     * 未定义则为0  
-     */
-    point?:number;
     /**是一个可以被移除诅移除的诅咒  
      * 默认false  
      */
@@ -83,8 +83,47 @@ export type EnchCtor = {
     ctor:(dm:DataManager)=>MPromise<{instance:EnchInsData[],data?:JObject[]}>;
 }
 
+export type EnchInsDataColumn = EnchInsData&{
+    /**附魔集
+     * 会按照length创建多个等级变体
+     * column_x 字段将会按变体等级合并或是覆盖到不同成员
+     * 其他字段为所有变体共用
+     */
+    type:"CustomEnchColumn"
+    /**附魔集长度 */
+    length:number;
+    /**附魔强度导致的效果
+     * 按变体等级应用成员
+     */
+    column_effect?:(EnchEffect[]|EnchEffect)[];
+    /**附魔点数  
+     * 按变体等级应用成员
+     */
+    column_point?:number[];
+    /**随机权重  
+     * 按变体等级应用成员
+     */
+    column_weight?:number[];
+    /**名称  
+     * 按变体等级应用成员
+     */
+    column_name?:string[];
+    /**描述  
+     * 按变体等级应用成员
+     */
+    column_info?:string[];
+    /**物品前缀  
+     * 按变体等级应用成员
+     */
+    column_item_prefix?:string[];
+    /**物品后缀  
+     * 按变体等级应用成员
+     */
+    column_item_suffix?:string[];
+}
+
 /**json附魔表单 */
 export type EnchJsonTable = ((EnchInsData&{
     /**附魔 */
     type:"CustomEnch"
-})|AnyCddaJson)[];
+})|EnchInsDataColumn|AnyCddaJson)[];

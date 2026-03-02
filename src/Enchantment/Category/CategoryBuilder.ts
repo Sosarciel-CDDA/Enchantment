@@ -1,9 +1,10 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EnchCtor, EnchInsData } from "../EnchInterface.schema";
+import { EnchCtor, EnchInsData, EnchInsDataColumn } from "../EnchInterface.schema";
 import { BoolExpr, Flag, FlagID } from "@sosarciel-cdda/schema";
-import { JObject, memoize, UtilFT } from "@zwa73/utils";
+import { deepClone, JObject, memoize, UtilFT } from "@zwa73/utils";
 import path from 'pathe';
 import { DATA_DIR } from "@/src/EMDefine";
+import { formatArray } from "../Define";
 
 
 const buildFlag = ({
@@ -52,16 +53,49 @@ export const getEnchConflictsExpr = (target:EnchInsData)=>{
 const EnchDir = path.join(DATA_DIR,'Enchantment');
 export const loadJsonEnch = async (dm:DataManager)=>{
     const enchFileList = await UtilFT.fileSearchGlob(EnchDir,'**/*.{json,json5}');
+    const filterType:any[] = ['CustomEnch','CustomEnchColumn'];
     const result = await Promise.all(enchFileList.map(async filepath=>{
         const data = await UtilFT.loadJSONFile<JObject[]>(filepath,{json5:true});
         const parsed = path.parse(path.relative(EnchDir,filepath));
 
-        const ins = data.filter(v=>v.type=='CustomEnch') as EnchInsData[];
+        const rawIns = data.filter(v=>v.type=='CustomEnch') as EnchInsData[];
+        const column = data.filter(v=>v.type=='CustomEnchColumn') as EnchInsDataColumn[];
+        const columnIns = column.flatMap(buildEnchInsColumn);
+        const ins = [...rawIns,...columnIns];
+
         const flagList = ins.map(buildFlag);
-        dm.addData([...flagList,...data.filter(v=>v.type!='CustomEnch')],'ench',parsed.dir,parsed.name);
+        dm.addData([...flagList,...data.filter(v=>!filterType.includes(v.type))],'ench',parsed.dir,parsed.name);
 
         return ins;
     })).then(v=>v.flat());
     pushConflictsKey(...result);
     return result;
 }
+
+
+const buildEnchInsColumn = (ins:EnchInsDataColumn)=>{
+    const {
+        length,column_effect,column_point,column_weight,
+        column_name,column_info,column_item_prefix,column_item_suffix,
+        ...rest} = ins;
+    const result:EnchInsData[] = [];
+
+    const fixedCommEff = formatArray(rest.effect);
+
+    for(let lvl=1;lvl<=length;lvl++){
+        const ench = deepClone(rest);
+        const fixedEff = formatArray(column_effect?.[lvl-1]);
+        ench.effect = [...fixedCommEff,...fixedEff];
+
+        ench.id = `${ench.id}_${lvl}`;
+        ench.point = column_point?.[lvl-1] ?? ench.point;
+        ench.weight = column_weight?.[lvl-1] ?? ench.weight;
+        ench.name = column_name?.[lvl-1] ?? ench.name;
+        ench.info = column_info?.[lvl-1] ?? ench.info;
+        ench.item_prefix = column_item_prefix?.[lvl-1] ?? ench.item_prefix;
+        ench.item_suffix = column_item_suffix?.[lvl-1] ?? ench.item_suffix;
+        result.push(ench);
+    }
+    return result;
+}
+

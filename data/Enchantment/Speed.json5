@@ -1,42 +1,28 @@
 [
     {
-        type: "CustomEnch",
-        id:"CENCH_FLAG_Speed_1_Ench",
-        name:"速度 I",
-		info: "<good>[速度 I]</good> 这件物品可以增加 5 点速度",
+        type: "CustomEnchColumn",
+        id:"CENCH_FLAG_Speed_Ench",
+        length: 3,
+        column_name:[
+            "速度 I",
+            "速度 II",
+            "速度 III"
+        ],
+		column_info: [
+            "<good>[速度 I]</good> 这件物品可以增加 5 点速度",
+            "<good>[速度 II]</good> 这件物品可以增加 10 点速度",
+            "<good>[速度 III]</good> 这件物品可以增加 15 点速度"
+        ],
         conflicts_key: ["speed"],
         category: ["armor"],
         enchant_slot: "hide",
-        flag_id: "CENCH_FLAG_Speed_Ench",
-        effect:[{id:'CENCH_EFF_Speed',value: 1}],
-        point: 10,
-        weight: 100,
-    },
-    {
-        type: "CustomEnch",
-        id:"CENCH_FLAG_Speed_2_Ench",
-        name:"速度 II",
-		info: "<good>[速度 II]</good> 这件物品可以增加 10 点速度",
-        conflicts_key: ["speed"],
-        category: ["armor"],
-        enchant_slot: "hide",
-        flag_id: "CENCH_FLAG_Speed_Ench",
-        effect:[{id:'CENCH_EFF_Speed',value: 2}],
-        point: 20,
-        weight: 75,
-    },
-    {
-        type: "CustomEnch",
-        id:"CENCH_FLAG_Speed_3_Ench",
-        name:"速度 III",
-		info: "<good>[速度 III]</good> 这件物品可以增加 10 点速度",
-        conflicts_key: ["speed"],
-        category: ["armor"],
-        enchant_slot: "hide",
-        flag_id: "CENCH_FLAG_Speed_Ench",
-        effect:[{id:'CENCH_EFF_Speed',value: 3}],
-        point: 30,
-        weight: 50,
+        column_effect:[
+            [{id:'CENCH_EFF_Speed',value: 1}],
+            [{id:'CENCH_EFF_Speed',value: 2}],
+            [{id:'CENCH_EFF_Speed',value: 3}]
+        ],
+        column_point: [10,20,30],
+        column_weight: [100,75,50],
     },
     {
         type:"effect_type",
