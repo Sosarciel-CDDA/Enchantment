@@ -1,4 +1,3 @@
-import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
@@ -13,16 +12,12 @@ export const AdditionalStrike = {
         const {instance,data} = createEnchLvlData(AdditionalStrike.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(AdditionalStrike.id,lvl);
+
             const change = (lvl+1)*10;
-            //变体ID
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(AdditionalStrike.id,lvl),
-                info:genEnchInfo('good',name,`这件物品有 ${change}% 的概率多攻击一次`),
-                item_prefix:genEnchPrefix('good',name),
-            };
+
             //触发eoc
-            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
+            const teoc = genWieldTrigger(dm,id,"TryMeleeAttack",[
                 {if:{x_in_y_chance:{x:change,y:100}},then:[
                     {u_attack:"tec_none",forced_movecost:1}
                 ]}
@@ -30,18 +25,21 @@ export const AdditionalStrike = {
             //加入输出
             return {
                 instance:{
-                    id:AdditionalStrike.id, flag_id:flag.id,
+                    name,
+                    id:enchLvlID(AdditionalStrike.id,lvl),
+                    info:genEnchInfo('good',name,`这件物品有 ${change}% 的概率多攻击一次`),
+                    item_prefix:genEnchPrefix('good',name),
+
                     category:["weapons"],
-                    conflicts:["AttackPosition"],
+                    conflicts_key:["AttackPosition"],
                     enchant_slot:'prefix',
                     weight:[RarityWeight.Rare ,RarityWeight.Epic   ][idx],
                     point :[RarityPoints.Magic,RarityPoints.Randart][idx],
                 },
-                data:[flag,teoc]
+                data:[teoc]
             }
         });
 
-        dm.addData([...data],"ench",AdditionalStrike.id);
-        return instance;
+        return {instance,data};
     }
 } satisfies EnchCtor;

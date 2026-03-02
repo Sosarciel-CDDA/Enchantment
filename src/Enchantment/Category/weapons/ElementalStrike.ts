@@ -1,6 +1,6 @@
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
-import { Flag, JM, Spell } from "@sosarciel-cdda/schema";
+import { JM, Spell } from "@sosarciel-cdda/schema";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, genWieldTrigger } from "../UtilGener";
 import { RarityPoints, RarityWeight } from "../../Define";
 
@@ -18,6 +18,7 @@ export const ElementalStrike = {
         const {data,instance} = createEnchLvlData(list.length,idx=>{
             const [elid,elname] = list[idx];
             const name = `${elname}打击`;
+            const id = EMDef.genFlagID(`${ElementalStrike.id}_${elid}_Ench`);
 
             const dmgVar = `${ElementalStrike.id}_${elid}_dmg`;
             const tspell:Spell = {
@@ -33,14 +34,8 @@ export const ElementalStrike = {
                 name:`${name} 附魔触发法术`,
                 description: `${name} 附魔触发法术`
             }
-            //变体ID
-            const flag:Flag = {
-                type:"json_flag", name,
-                id: EMDef.genFlagID(`${ElementalStrike.id}_${elid}_Ench`),
-                info:genEnchInfo('good',name,`这件物品可以额外造成 30% 的 ${elname} 伤害`),
-                item_prefix:genEnchPrefix('good',name),
-            };
-            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
+
+            const teoc = genWieldTrigger(dm,id,"TryMeleeAttack",[
                 {
                     u_run_inv_eocs:"all",
                     search_data:[{wielded_only:true}],
@@ -55,18 +50,20 @@ export const ElementalStrike = {
             ])
             return {
                 instance:{
-                    id:ElementalStrike.id, flag_id:flag.id,
+                    name, id,
+                    info:genEnchInfo('good',name,`这件物品可以额外造成 30% 的 ${elname} 伤害`),
+                    item_prefix:genEnchPrefix('good',name),
+
                     category:["weapons"],
-                    conflicts:["Elemental"],
-                    enchant_slot:'prefix',
+                    conflicts_key:["Elemental"],
+                    enchant_slot:'prefix' as const,
                     weight:RarityWeight.Common/list.length,
                     point :RarityPoints.Basic
                 },
-                data:[tspell,flag,teoc]
+                data:[tspell,teoc]
             }
         });
 
-        dm.addData([...data],"ench",ElementalStrike.id);
-        return instance;
+        return {instance,data};
     }
 } satisfies EnchCtor;

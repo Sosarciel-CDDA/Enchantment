@@ -1,7 +1,7 @@
 import { DataManager } from "@sosarciel-cdda/event";
 import { buildArmorEnch } from "./armor";
 import { buildWeaponsEnch } from "./weapons";
-import { loadJsonEnch } from "./JsonLoader";
+import { loadJsonEnch } from "./CategoryBuilder";
 
 
 export * from "./CategoryBuilder";

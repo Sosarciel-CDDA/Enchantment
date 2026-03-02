@@ -8,19 +8,18 @@ import { EnchInsData } from "./EnchInterface.schema";
 
 
 export async function buildDebugItem(dm:DataManager,enchInsList:EnchInsData[]){
-    const enchFlagList = enchInsList.map(ins=>ins.flag);
     const out:JObject[] = [];
     const NONEEocId = "EnchTestNone" as EocID;
 
     const enchTestList = [
         [EMDef.genActEoc("EnchTestAdd",[{run_eocs:INIT_ENCH_DATA_EOC_ID},{
-            run_eoc_selector:[...enchFlagList.map(ench=>operaEID(ench,"add")),NONEEocId],
-            names:[...enchFlagList.map(ench=>ench.name as string),"算了"],
+            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench.id,"add")),NONEEocId],
+            names:[...enchInsList.map(ench=>ench.name as string),"算了"],
             hide_failing:true
         }]),"添加附魔"],
         [EMDef.genActEoc("EnchTestRemove",[{
-            run_eoc_selector:[...enchFlagList.map(ench=>operaEID(ench,"remove")),NONEEocId],
-            names:[...enchFlagList.map(ench=>ench.name as string),"算了"],
+            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench.id,"remove")),NONEEocId],
+            names:[...enchInsList.map(ench=>ench.name as string),"算了"],
             hide_failing:true
         }]),"移除附魔"],
         [EMDef.genActEoc(NONEEocId,[],undefined,true),"取消调试"],

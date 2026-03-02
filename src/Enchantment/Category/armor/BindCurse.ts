@@ -1,23 +1,22 @@
-import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor, EnchInsData } from "@/src/Enchantment/EnchInterface.schema";
-import { enchLvlID } from "@/src/Enchantment/Define";
+import { EMDef } from "@/src/EMDefine";
 
+
+export const BindCurseFlagId = EMDef.genFlagID(`BindCurse_Ench`);
 
 export const BindCurse = {
     id:"BindCurse",
     ctor:dm=>{
         const name = "绑定诅咒";
-        const flag:Flag = {
-            type:"json_flag", name,
-            id:BindCurseLvlFlagId,
-            info:genEnchInfo("bad",name,`这件物品在移除诅咒前无法脱下`),
-            item_prefix:genEnchPrefix('bad',name),
-        };
 
         //构造附魔集
         const enchData:EnchInsData={
-            id:BindCurse.id, flag_id:flag.id,
+            name,
+            id:BindCurseFlagId,
+            info:genEnchInfo("bad",name,`这件物品在移除诅咒前无法脱下`),
+            item_prefix:genEnchPrefix('bad',name),
+
             category:["armor"],
             enchant_slot:'prefix',
             add_effects:[
@@ -28,9 +27,6 @@ export const BindCurse = {
             is_curse:true,
         };
 
-        dm.addData([flag],"ench",BindCurse.id);
-        return [enchData];
+        return {instance:[enchData]};
     }
 } satisfies EnchCtor;
-
-export const BindCurseLvlFlagId = enchLvlID(BindCurse.id,1);

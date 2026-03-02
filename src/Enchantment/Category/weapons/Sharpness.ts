@@ -1,5 +1,5 @@
 import { EMDef } from "@/src/EMDefine";
-import { Effect, Flag } from "@sosarciel-cdda/schema";
+import { Effect } from "@sosarciel-cdda/schema";
 import { EnchCtor } from "../../EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "../../Define";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, numToRoman } from "../UtilGener";
@@ -28,29 +28,23 @@ export const Sharpness = {
         const {instance,data} = createEnchLvlData(Sharpness.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
-
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(Sharpness.id,lvl),
-                info:genEnchInfo("good",name,`这件物品可以提升 ${lvl*10+10}% 造成的物理伤害`),
-                item_prefix:genEnchPrefix('good',name),
-            };
-
             return {
                 instance:{
-                    id:Sharpness.id,flag_id:flag.id,
+                    name,
+                    id:enchLvlID(Sharpness.id,lvl),
+                    info:genEnchInfo("good",name,`这件物品可以提升 ${lvl*10+10}% 造成的物理伤害`),
+                    item_prefix:genEnchPrefix('good',name),
+
                     category:["weapons"],
-                    conflicts:["Sharpness"],
+                    conflicts_key:["Sharpness"],
                     enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare][idx],
                     point :[RarityPoints.Basic,RarityPoints.Magic][idx],
-                },
-                data:[flag]
+                }
             }
         });
 
-        dm.addData([eff,...data],"ench",Sharpness.id);
-        return instance;
+        return {instance,data:[eff]};
     }
 } satisfies EnchCtor;

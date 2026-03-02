@@ -1,5 +1,5 @@
 import { EMDef } from "@/src/EMDefine";
-import { Effect, Flag } from "@sosarciel-cdda/schema";
+import { Effect } from "@sosarciel-cdda/schema";
 import { EnchCtor } from "../../EnchInterface.schema";
 import { enchLvlID, RarityWeight } from "../../Define";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, numToRoman } from "../UtilGener";
@@ -30,27 +30,22 @@ export const Dullness = {
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
 
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(Dullness.id,lvl),
-                info:genEnchInfo("bad",name,`这件物品会减少 ${lvl*10+10}% 造成的物理伤害`),
-                item_prefix:genEnchPrefix('bad',name),
-            };
-
             return {
                 instance:{
-                    id:Dullness.id, flag_id:flag.id,
+                    name,
+                    id:enchLvlID(Dullness.id,lvl),
+                    info:genEnchInfo("bad",name,`这件物品会减少 ${lvl*10+10}% 造成的物理伤害`),
+                    item_prefix:genEnchPrefix('bad',name),
+
                     category:["weapons"] as const,
-                    conflicts:["Sharpness"],
+                    conflicts_key:["Sharpness"],
                     enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
-                },
-                data:[flag]
+                }
             }
         });
 
-        dm.addData([eff,...data],"ench",Dullness.id);
-        return instance;
+        return {instance,data:[eff,...data]};
     }
 } satisfies EnchCtor;

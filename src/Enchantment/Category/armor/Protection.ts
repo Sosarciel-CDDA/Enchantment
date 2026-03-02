@@ -1,4 +1,4 @@
-import { Effect, Flag } from "@sosarciel-cdda/schema";
+import { Effect } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
@@ -31,28 +31,23 @@ export const Protection = {
         const {instance,data} = createEnchLvlData(Protection.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
-            //变体ID
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(Protection.id,lvl),
-                info:genEnchInfo("good",name,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
-                item_prefix:genEnchPrefix('good',name),
-            };
             return {
                 instance:{
-                    id:Protection.id,flag_id:flag.id,
+                    name,
+                    id:enchLvlID(Protection.id,lvl),
+                    info:genEnchInfo("good",name,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
+                    item_prefix:genEnchPrefix('good',name),
+
                     category:["armor"],
-                    conflicts:["Protection"],
+                    conflicts_key:["Protection"],
                     enchant_slot:'prefix',
                     effect:[{id:effid,value:lvl+1}],
                     weight:[RarityWeight.Common,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic ,RarityPoints.Magic][idx],
-                },
-                data:[flag]
+                }
             }
         });
 
-        dm.addData([eff,...data],"ench",Protection.id);
-        return instance;
+        return {instance,data:[eff,...data]};
     }
 } satisfies EnchCtor;

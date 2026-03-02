@@ -1,4 +1,4 @@
-import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
+import { DamageTypeID, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
@@ -31,32 +31,28 @@ export const Knockback = {
         const {instance,data} = createEnchLvlData(Knockback.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
-            //变体ID
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(Knockback.id,lvl),
-                info:genEnchInfo('pink',name,`这件物品可以造成 ${lvl} 点击退伤害`),
-                item_prefix:genEnchPrefix('pink',name),
-            };
+            const id = enchLvlID(Knockback.id,lvl);
             //触发eoc
-            const teoc = genWieldTrigger(dm,flag.id,"TryMeleeAttack",[
+            const teoc = genWieldTrigger(dm,id,"TryMeleeAttack",[
                 {npc_location_variable:{context_val:`${Knockback.id}_loc`}},
                 {u_cast_spell:{id:tspell.id,min_level:idx},loc:{context_val:`${Knockback.id}_loc`}}
             ])
             return {
                 instance:{
-                    id:Knockback.id, flag_id:flag.id,
+                    name, id,
+                    info:genEnchInfo('pink',name,`这件物品可以造成 ${lvl} 点击退伤害`),
+                    item_prefix:genEnchPrefix('pink',name),
+
                     category:["weapons"],
-                    conflicts:["AttackPosition"],
+                    conflicts_key:["AttackPosition"],
                     enchant_slot:'prefix',
                     weight:[RarityWeight.Uncommon,RarityWeight.Rare ][idx],
                     point :[RarityPoints.Basic   ,RarityPoints.Magic][idx]
                 },
-                data:[flag,teoc]
+                data:[teoc]
             }
         });
 
-        dm.addData([tspell, ...data],"ench",Knockback.id);
-        return instance;
+        return {instance,data:[tspell, ...data]};
     }
 } satisfies EnchCtor;

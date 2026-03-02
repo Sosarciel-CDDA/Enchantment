@@ -1,6 +1,6 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { AnyCddaJson, BoolExpr, EffectID, EocEffect, FlagID, ItemSearchData } from "@sosarciel-cdda/schema";
-import { MPromise } from "@zwa73/utils";
+import { AnyCddaJson, BoolExpr, EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
+import { JObject, MPromise } from "@zwa73/utils";
 import { MAX_HIDE_ENCH_COUNT, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT } from "./Define";
 
 /**可用的附魔类型 列表 */
@@ -29,7 +29,7 @@ export type EffectActiveCond = typeof EffectActiveCondList[number];
 /**生效时机映射 */
 export const EffectActiveCondSearchDataMap:Record<EffectActiveCond,ItemSearchData[]> = {
     wield :[{wielded_only:true}] ,
-    worn   :[{worn_only:true}]   ,
+    worn  :[{worn_only:true}]    ,
     //food    :[{flags:["EATEN_HOT"]},{flags:["SMOKABLE"]}],
 }
 
@@ -44,10 +44,6 @@ export const EnchSlotList = ['prefix','suffix','hide'] as const;
 export type EnchSlot = typeof EnchSlotList[number];
 /**附魔类型中的某个实例的数据 */
 export type EnchInsData = {
-    /**id */
-    id:string;
-    /**附魔标志 */
-    flag_id:FlagID;
     /**随机权重 */
     weight?:number;
     /**添加时会执行的effect */
@@ -75,8 +71,8 @@ export type EnchInsData = {
     /**冲突键组
      * 冲突键组相交的附魔互相冲突
      */
-    conflicts?:string[];
-}
+    conflicts_key?:string[];
+}&Omit<Flag,'type'>;
 
 /**附魔构造器 */
 export type EnchCtor = {
@@ -84,7 +80,7 @@ export type EnchCtor = {
     id  :string;
     /**附魔最大值 默认1 */
     max?:number;
-    ctor:(dm:DataManager)=>MPromise<EnchInsData[]>;
+    ctor:(dm:DataManager)=>MPromise<{instance:EnchInsData[],data?:JObject[]}>;
 }
 
 /**json附魔表单 */

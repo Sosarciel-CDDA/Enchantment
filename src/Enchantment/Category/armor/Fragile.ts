@@ -1,9 +1,9 @@
-import { Effect, Flag } from "@sosarciel-cdda/schema";
+import { Effect } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
 import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, operaEID, RarityWeight } from "@/src/Enchantment/Define";
-import { BindCurseLvlFlagId } from "./BindCurse";
+import { BindCurseFlagId } from "./BindCurse";
 
 const dt = ["bash","cut","stab","bullet"] as const;
 export const Fragile = {
@@ -31,28 +31,25 @@ export const Fragile = {
         const {instance,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
-            //变体ID
-            const flag:Flag = {
-                type:"json_flag", name,
-                id:enchLvlID(Fragile.id,lvl),
-                info:genEnchInfo("bad",name,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
-                item_prefix:genEnchPrefix('bad',name),
-            };
+
             return {
                 instance:{
-                    id:Fragile.id, flag_id:flag.id,
+                    name,
+                    id:enchLvlID(Fragile.id,lvl),
+                    info:genEnchInfo("bad",name,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
+                    item_prefix:genEnchPrefix('bad',name),
+
                     effect: [{id:effid,value:lvl+1}],
                     category:["armor"],
                     enchant_slot:'prefix',
                     //负面附魔会附带绑定诅咒
-                    add_effects:[{run_eocs:operaEID(BindCurseLvlFlagId,"add")}],
-                    conflicts:["Protection"],
+                    add_effects:[{run_eocs:operaEID(BindCurseFlagId,"add")}],
+                    conflicts_key:["Protection"],
                     weight:[RarityWeight.Common/4,RarityWeight.Rare/4][idx],
-                },
-                data:[flag]
+                }
             }
         });
-        dm.addData([eff,...data],"ench",Fragile.id);
-        return instance;
+
+        return {instance,data:[eff,...data]};
     }
 } satisfies EnchCtor;
