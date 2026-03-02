@@ -1,6 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
-import { EnchSlot } from "./EnchInterface.schema";
+import { EnchInsData, EnchSlot } from "./EnchInterface.schema";
 
 //#region 需初始化变量
 /**最大附魔尝试次数
@@ -67,7 +67,7 @@ export const IS_CURSED_FLAG_ID     = EMDef.genFlagID("IS_CURSED");
 export const IS_IDENTIFYED_FLAG_ID = EMDef.genFlagID("IS_IDENTIFYED");
 
 /**辅助eoc的id 对 beta 增减某个附魔 */
-export function operaEID(flag:Flag|FlagID,t:"add"|"remove"){
+export function operaEID(flag:Flag|FlagID|EnchInsData,t:"add"|"remove"){
     const id = typeof flag == "string" ? flag:flag.id;
     return EMDef.genEocID(`${id}_${t}`);
 }
