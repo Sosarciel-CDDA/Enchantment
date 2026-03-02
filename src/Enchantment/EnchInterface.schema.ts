@@ -86,9 +86,9 @@ export type EnchCtor = {
 export type EnchInsDataColumn = EnchInsData&{
     /**附魔集
      * 会按照length创建多个等级变体
-     * column_x 字段将会按变体等级合并或是覆盖到不同成员
+     * column_* 字段将会按变体等级合并或是覆盖到不同成员
      * 其他字段为所有变体共用
-     * 变体id为 `原始id_[lvl]` lvl起始为1
+     * 变体id为 `基础id_${lvl}` lvl起始为1
      */
     type:"CustomEnchColumn"
     /**附魔集长度 */
