@@ -116,7 +116,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             //如果是诅咒的则加上诅咒flag
             ... (ins.is_curse ? [{npc_set_flag:IS_CURSED_FLAG_ID}]:[]),
             //增加附魔点数
-            {math:[`n_${ENCH_POINT_CUR}`,"+=",`${ins.point}`]},
+            ... (ins.point!=undefined ? [{math:[`n_${ENCH_POINT_CUR}`,"+=",`${ins.point}`]} satisfies EocEffect]:[]),
             {math:[`n_${enchCurSlotCount(ins.enchant_slot)}`,"+=",`1`]},
             //添加附魔数据定义的副作用
             ...ins.add_effects??[],
@@ -145,8 +145,8 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
             //添加移除变体flag
             {npc_unset_flag:ins.id},
             //减少附魔点数
-            {math:[`n_${ENCH_POINT_CUR}`,"-=",`${ins.point}`]},
-            {math:[`n_${enchCurSlotCount(ins.enchant_slot)}`,"-=",`${ins.point}`]},
+            ... (ins.point!=undefined ? [{math:[`n_${ENCH_POINT_CUR}`,"-=",`${ins.point}`]} satisfies EocEffect]:[]),
+            {math:[`n_${enchCurSlotCount(ins.enchant_slot)}`,"-=",`1`]},
             //添加附魔数据定义的副作用
             ...ins.remove_effects??[],
         ],{npc_has_flag:ins.id},true)
