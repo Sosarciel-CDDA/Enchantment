@@ -2,7 +2,7 @@ import { EMDef } from "@/src/EMDefine";
 import { JObject } from "@zwa73/utils";
 import { DataManager } from "@sosarciel-cdda/event";
 import { Spell } from "@sosarciel-cdda/schema";
-import { EnchTypeSearchDataMap, VaildEnchCategoryList } from "./EnchInterface";
+import { EnchTypeSearchDataMap, VaildEnchCategoryList } from "./EnchInterface.schema";
 import { IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE } from "./Define";
 
 

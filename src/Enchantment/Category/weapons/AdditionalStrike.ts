@@ -1,6 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -30,7 +30,7 @@ export const AdditionalStrike = {
             //加入输出
             return {
                 instance:{
-                    id:AdditionalStrike.id, flag,
+                    id:AdditionalStrike.id, flag_id:flag.id,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
                     enchant_slot:'prefix',

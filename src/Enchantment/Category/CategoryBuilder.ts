@@ -1,5 +1,5 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EnchCtor, EnchInsData } from "../EnchInterface";
+import { EnchCtor, EnchInsData } from "../EnchInterface.schema";
 import { BoolExpr, FlagID } from "@sosarciel-cdda/schema";
 import { memoize } from "@zwa73/utils";
 
@@ -11,11 +11,16 @@ const ConflictsIdx:Record<string,Set<FlagID>> = {};
 /**构造附魔类型 */
 export async function buildEnchCate(dm:DataManager,...ctorList:EnchCtor[]){
     const resultList = await Promise.all(ctorList.map(ctor=>ctor.ctor(dm))).then(v=>v.flat());
-    resultList.forEach(v=>v.conflicts?.forEach(c=>{
-        ConflictsIdx[c]??=new Set();
-        ConflictsIdx[c].add(v.flag.id)
-    }));
+    pushConflictsKey(...resultList);
     return resultList;
+}
+
+/**加入冲突键 */
+export function pushConflictsKey(...insList:EnchInsData[]){
+    insList.forEach(v=>v.conflicts?.forEach(c=>{
+        ConflictsIdx[c]??=new Set();
+        ConflictsIdx[c].add(v.flag_id)
+    }));
 }
 
 /**获取冲突id */

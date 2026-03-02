@@ -3,7 +3,7 @@ import { JObject } from "@zwa73/utils";
 import { EocID, Item } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { INIT_ENCH_DATA_EOC_ID, operaEID } from "./Define";
-import { EnchInsData } from "./EnchInterface";
+import { EnchInsData } from "./EnchInterface.schema";
 
 
 

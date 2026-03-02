@@ -1,6 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { Effect, Flag } from "@sosarciel-cdda/schema";
-import { EnchCtor } from "../../EnchInterface";
+import { EnchCtor } from "../../EnchInterface.schema";
 import { enchLvlID, RarityWeight } from "../../Define";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, numToRoman } from "../UtilGener";
 
@@ -39,7 +39,7 @@ export const Dullness = {
 
             return {
                 instance:{
-                    id:Dullness.id, flag,
+                    id:Dullness.id, flag_id:flag.id,
                     category:["weapons"] as const,
                     conflicts:["Sharpness"],
                     enchant_slot:'prefix',

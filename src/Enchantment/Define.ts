@@ -1,6 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
-import { EnchSlot } from "./EnchInterface";
+import { EnchSlot } from "./EnchInterface.schema";
 
 //#region 需初始化变量
 /**最大附魔尝试次数

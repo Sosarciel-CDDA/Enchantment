@@ -1,5 +1,5 @@
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
-import { EnchCtor } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { Flag, JM, Spell } from "@sosarciel-cdda/schema";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, genWieldTrigger } from "../UtilGener";
 import { RarityPoints, RarityWeight } from "../../Define";
@@ -55,7 +55,7 @@ export const ElementalStrike = {
             ])
             return {
                 instance:{
-                    id:ElementalStrike.id, flag,
+                    id:ElementalStrike.id, flag_id:flag.id,
                     category:["weapons"],
                     conflicts:["Elemental"],
                     enchant_slot:'prefix',

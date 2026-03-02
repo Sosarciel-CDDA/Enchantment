@@ -1,5 +1,5 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { BoolExpr, EffectID, EocEffect, Flag, ItemSearchData } from "@sosarciel-cdda/schema";
+import { AnyCddaJson, BoolExpr, EffectID, EocEffect, FlagID, ItemSearchData } from "@sosarciel-cdda/schema";
 import { MPromise } from "@zwa73/utils";
 import { MAX_HIDE_ENCH_COUNT, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT } from "./Define";
 
@@ -47,7 +47,7 @@ export type EnchInsData = {
     /**id */
     id:string;
     /**附魔标志 */
-    flag:Flag;
+    flag_id:FlagID;
     /**随机权重 */
     weight?:number;
     /**添加时会执行的effect */
@@ -86,3 +86,9 @@ export type EnchCtor = {
     max?:number;
     ctor:(dm:DataManager)=>MPromise<EnchInsData[]>;
 }
+
+/**json附魔表单 */
+export type EnchJsonTable = EnchInsData&{
+    /**此附魔的附加数据 */
+    addition_data?:AnyCddaJson[]
+};

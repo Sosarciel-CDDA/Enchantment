@@ -1,6 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { Effect, Flag } from "@sosarciel-cdda/schema";
-import { EnchCtor } from "../../EnchInterface";
+import { EnchCtor } from "../../EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "../../Define";
 import { createEnchLvlData, genEnchInfo, genEnchPrefix, numToRoman } from "../UtilGener";
 
@@ -38,7 +38,7 @@ export const Sharpness = {
 
             return {
                 instance:{
-                    id:Sharpness.id,flag,
+                    id:Sharpness.id,flag_id:flag.id,
                     category:["weapons"],
                     conflicts:["Sharpness"],
                     enchant_slot:'prefix',

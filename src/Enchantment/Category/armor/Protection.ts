@@ -1,7 +1,7 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -40,7 +40,7 @@ export const Protection = {
             };
             return {
                 instance:{
-                    id:Protection.id,flag,
+                    id:Protection.id,flag_id:flag.id,
                     category:["armor"],
                     conflicts:["Protection"],
                     enchant_slot:'prefix',

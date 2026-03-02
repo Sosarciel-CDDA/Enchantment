@@ -1,7 +1,7 @@
 import { DamageTypeID, Flag, Spell } from "@sosarciel-cdda/schema";
 import { CON_SPELL_FLAG, EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, genWieldTrigger, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, RarityPoints, RarityWeight } from "@/src/Enchantment/Define";
 
 
@@ -45,7 +45,7 @@ export const Knockback = {
             ])
             return {
                 instance:{
-                    id:Knockback.id, flag,
+                    id:Knockback.id, flag_id:flag.id,
                     category:["weapons"],
                     conflicts:["AttackPosition"],
                     enchant_slot:'prefix',

@@ -1,7 +1,7 @@
 import { Effect, Flag } from "@sosarciel-cdda/schema";
 import { EMDef } from "@/src/EMDefine";
 import { genEnchInfo, genEnchPrefix, numToRoman, createEnchLvlData } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID, operaEID, RarityWeight } from "@/src/Enchantment/Define";
 import { BindCurseLvlFlagId } from "./BindCurse";
 
@@ -40,7 +40,7 @@ export const Fragile = {
             };
             return {
                 instance:{
-                    id:Fragile.id, flag,
+                    id:Fragile.id, flag_id:flag.id,
                     effect: [{id:effid,value:lvl+1}],
                     category:["armor"],
                     enchant_slot:'prefix',

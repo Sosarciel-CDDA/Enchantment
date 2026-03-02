@@ -1,6 +1,6 @@
 import { Flag } from "@sosarciel-cdda/schema";
 import { genEnchInfo, genEnchPrefix } from "@/src/Enchantment/Category/UtilGener";
-import { EnchCtor, EnchInsData } from "@/src/Enchantment/EnchInterface";
+import { EnchCtor, EnchInsData } from "@/src/Enchantment/EnchInterface.schema";
 import { enchLvlID } from "@/src/Enchantment/Define";
 
 
@@ -17,7 +17,7 @@ export const BindCurse = {
 
         //构造附魔集
         const enchData:EnchInsData={
-            id:BindCurse.id, flag,
+            id:BindCurse.id, flag_id:flag.id,
             category:["armor"],
             enchant_slot:'prefix',
             add_effects:[

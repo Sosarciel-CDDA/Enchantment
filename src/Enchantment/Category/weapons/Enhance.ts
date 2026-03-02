@@ -1,6 +1,6 @@
 import { EMDef } from "@/src/EMDefine";
 import { Effect, Flag } from "@sosarciel-cdda/schema";
-import { EnchCtor } from "../../EnchInterface";
+import { EnchCtor } from "../../EnchInterface.schema";
 import { enchLvlID, RarityWeight } from "../../Define";
 import { createEnchLvlData, genEnchInfo, numToRoman } from "../UtilGener";
 
@@ -36,7 +36,7 @@ export const Enhance = {
 
             return {
                 instance:{
-                    id:Enhance.id,flag,
+                    id:Enhance.id,flag_id:flag.id,
                     category:["weapons" as const],
                     conflicts:["Enhance"],
                     enchant_slot:'suffix',
