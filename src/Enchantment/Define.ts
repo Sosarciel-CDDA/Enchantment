@@ -103,16 +103,16 @@ export const AliasResult = "AliasResult";
 
 /**权重分级 */
 export const RarityWeight = {
-    /**比标准更常见的制式品 */
-    Poor       :100,
     /**标准 如 保护I/元素打击 */
-    Common     :67,
+    Common     :100,
     /**稀有 如 元素爆发 */
-    Uncommon   :45,
+    Uncommon   :67,
     /**罕见 如 追加打击I/保护II */
-    Rare       :30,
+    Rare       :45,
     /**史诗 如 追加打击II */
-    Epic       :20 ,
+    Epic       :30 ,
+    /**传说 */
+    Legendary  :20 ,
 }
 /**稀有度分级 */
 export const RarityPoints = {
