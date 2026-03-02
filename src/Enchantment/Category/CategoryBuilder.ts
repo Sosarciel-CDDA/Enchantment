@@ -87,11 +87,11 @@ const buildEnchInsColumn = (ins:EnchInsDataColumn)=>{
         const fixedEff = formatArray(column_effect?.[lvl-1]);
         ench.effect = [...fixedCommEff,...fixedEff];
 
-        ench.id = `${ench.id}_${lvl}`;
-        ench.point = column_point?.[lvl-1] ?? ench.point;
+        ench.id     = `${ench.id}_${lvl}`;
+        ench.point  = column_point?.[lvl-1] ?? ench.point;
         ench.weight = column_weight?.[lvl-1] ?? ench.weight;
-        ench.name = column_name?.[lvl-1] ?? ench.name;
-        ench.info = column_info?.[lvl-1] ?? ench.info;
+        ench.name   = column_name?.[lvl-1] ?? ench.name;
+        ench.info   = column_info?.[lvl-1] ?? ench.info;
         ench.item_prefix = column_item_prefix?.[lvl-1] ?? ench.item_prefix;
         ench.item_suffix = column_item_suffix?.[lvl-1] ?? ench.item_suffix;
         result.push(ench);
