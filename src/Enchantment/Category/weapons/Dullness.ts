@@ -29,11 +29,11 @@ export const Dullness = {
         const {instance,data} = createEnchLvlData(Dullness.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(Dullness.id,lvl);
 
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(Dullness.id,lvl),
+                    name, id,
                     info:genEnchInfo("bad",name,`这件物品会减少 ${lvl*10+10}% 造成的物理伤害`),
                     item_prefix:genEnchPrefix('bad',name),
 

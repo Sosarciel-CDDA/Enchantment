@@ -31,11 +31,11 @@ export const Fragile = {
         const {instance,data} = createEnchLvlData(Fragile.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(Fragile.id,lvl);
 
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(Fragile.id,lvl),
+                    name, id,
                     info:genEnchInfo("bad",name,`这件物品会增加 ${lvl*10+10}% 所受到的物理伤害`),
                     item_prefix:genEnchPrefix('bad',name),
 

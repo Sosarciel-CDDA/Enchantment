@@ -31,10 +31,10 @@ export const Protection = {
         const {instance,data} = createEnchLvlData(Protection.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(Protection.id,lvl)
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(Protection.id,lvl),
+                    name, id,
                     info:genEnchInfo("good",name,`这件物品可以降低 ${lvl*10+10}% 所受到的物理伤害`),
                     item_prefix:genEnchPrefix('good',name),
 

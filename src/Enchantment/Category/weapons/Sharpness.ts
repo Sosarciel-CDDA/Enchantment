@@ -28,10 +28,10 @@ export const Sharpness = {
         const {instance,data} = createEnchLvlData(Sharpness.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(Sharpness.id,lvl);
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(Sharpness.id,lvl),
+                    name, id,
                     info:genEnchInfo("good",name,`这件物品可以提升 ${lvl*10+10}% 造成的物理伤害`),
                     item_prefix:genEnchPrefix('good',name),
 

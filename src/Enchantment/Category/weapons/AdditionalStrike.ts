@@ -25,8 +25,7 @@ export const AdditionalStrike = {
             //加入输出
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(AdditionalStrike.id,lvl),
+                    name, id,
                     info:genEnchInfo('good',name,`这件物品有 ${change}% 的概率多攻击一次`),
                     item_prefix:genEnchPrefix('good',name),
 

@@ -26,11 +26,11 @@ export const Enhance = {
         const {instance,data} = createEnchLvlData(Enhance.max,idx=>{
             const lvl = idx+1;
             const name = `${enchName} ${numToRoman(lvl)}`;
+            const id = enchLvlID(Enhance.id,lvl);
 
             return {
                 instance:{
-                    name,
-                    id:enchLvlID(Enhance.id,lvl),
+                    name, id,
                     info:genEnchInfo("good",name,`这件物品可以提升 ${lvl*10+10}% 造成的物理伤害`),
                     item_suffix:` <color_white>+${lvl}</color>`,
 
