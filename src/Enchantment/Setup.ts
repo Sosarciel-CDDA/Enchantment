@@ -1,6 +1,6 @@
 import { Eoc, JM } from "@sosarciel-cdda/schema";
 import { EMDef } from "../EMDefine";
-import { ENCH_CHANGE, MAX_ENCH_COUNT, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT, MAX_HIDE_ENCH_COUNT, RareEnum } from "./Define";
+import { ENCH_CHANGE, MAX_PREFIX_ENCH_COUNT, MAX_SUFFIX_ENCH_COUNT, MAX_HIDE_ENCH_COUNT, RareEnum } from "./Define";
 import { DataManager, setupCtor } from "@sosarciel-cdda/event";
 import { RemoveCurseSpellID } from "./RemoveCurseSpell";
 import { IdentifySpellID } from "./IdentifySpell";
@@ -11,7 +11,6 @@ import { IdentifySpellID } from "./IdentifySpell";
 const setuplist = setupCtor({
     table:[
         {var:ENCH_CHANGE            ,desc:'附魔物品的生成几率, 100为100%',def:'10' },
-        {var:MAX_ENCH_COUNT         ,desc:'附魔物品生成时的尝试次数, 越高越容易充满点数',def:'10' },
         {var:MAX_PREFIX_ENCH_COUNT  ,desc:'最大前缀附魔数量',def:'1' },
         {var:MAX_SUFFIX_ENCH_COUNT  ,desc:'最大后缀附魔数量',def:'1' },
         {var:MAX_HIDE_ENCH_COUNT    ,desc:'最大隐含附魔数量',def:'2' },

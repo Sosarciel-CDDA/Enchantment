@@ -3,11 +3,6 @@ import { EffectID, Flag, FlagID } from "@sosarciel-cdda/schema";
 import { EnchInsData, EnchSlot } from "./EnchInterface.schema";
 
 //#region 需初始化变量
-/**最大附魔尝试次数
- * 变量名
- */
-export const MAX_ENCH_COUNT = "MaxEnchCount";
-
 /**最大前缀附魔量
  * 变量名
  */

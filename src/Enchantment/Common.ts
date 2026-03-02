@@ -1,9 +1,9 @@
 import { DataManager } from "@sosarciel-cdda/event";
-import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchSlotList, EnchSlotMaxVarMap, EnchTypeSearchDataMap, VaildEnchCategory, VaildEnchCategoryList } from "./EnchInterface.schema";
+import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchSlot, EnchSlotList, EnchSlotMaxVarMap, EnchTypeSearchDataMap, VaildEnchCategory, VaildEnchCategoryList } from "./EnchInterface.schema";
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
-import { BoolExpr, Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID, ENCH_RARE_CUR, RareEnum } from "./Define";
+import { Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
+import { COMPLETE_ENCH_INIT, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID, ENCH_RARE_CUR, RareEnum } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -178,28 +178,25 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
     const noneEnchEoc = EMDef.genActEoc("NoneEnch",[]);
 
     //根据随机权重生成 附魔类别 : weight_list_eoc数据 表单
-    const weightListMap:Record<VaildEnchCategory,[EocID,NumberExpr][]> = {} as any;
+    const weightListMap:Record<EnchSlot,Record<VaildEnchCategory,[EocID,NumberExpr][]>> = {} as any;
     //遍历附魔类别与附魔数据表
-    for(const cate of VaildEnchCategoryList){
-        //cate下总附魔权重
-        const weightSum = enchDataList
-            .filter(v=>v.category.includes(cate))
-            .reduce((enchsum,ench)=>enchsum + (ench.weight??0),0);
-
-        //空附魔权重
-        //const noneWeight  = weightSum/ENCH_EMPTY_IN;
-        //将空eoc加入表单
-        weightListMap[cate] = [
-            //[noneEnchEoc.id,noneWeight],
-            ... enchDataList //遍历所有附魔
-                .filter(ench=>ench.category.includes(cate))
-                .filter(ins=>(ins.weight??0)>0)
-                .map(ins=>[operaEID(ins,"add"),ins.weight ?? 0] satisfies [EocID,NumberExpr])
-        ];
+    for(const slot of EnchSlotList){
+        const fxslot = slot as EnchSlot;
+        weightListMap[fxslot] ??={} as any;
+        for(const cate of VaildEnchCategoryList){
+            //将空eoc加入表单
+            weightListMap[fxslot][cate] = [
+                //[noneEnchEoc.id,noneWeight],
+                ... enchDataList //遍历所有附魔
+                    .filter(ench=>ench.category.includes(cate))
+                    .filter(ench=>ench.enchant_slot==fxslot)
+                    .filter(ins=>(ins.weight??0)>0)
+                    .map(ins=>[operaEID(ins,"add"),ins.weight ?? 0] satisfies [EocID,NumberExpr])
+            ];
+        }
     }
 
-    //附魔子eoc
-    const subeocid = EMDef.genEocID('IdentifyEnch_each');
+    const EnchCount = 10;
     //鉴定主EOC
     const identifyEnchEoc:Eoc = {
         id:IDENTIFY_EOC_ID,
@@ -237,24 +234,31 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
 
                 //初始化附魔尝试次数
                 {math:["_eachCount","=",`0`]},
-                //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
-                ...(VaildEnchCategoryList.map(cate=>({run_eocs:{
-                    id:`${subeocid}_${cate}` as EocID,
-                    eoc_type:"ACTIVATION",
-                    condition:{not:{or:[
-                        //次数超过尝试次数
-                        {math:["_eachCount",">",MAX_ENCH_COUNT]},
-                        //点数已满
-                        {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
-                        //所有槽位已满
-                        {and:EnchSlotList.map(slot=>({math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]}) satisfies BoolExpr)},
-                    ]}},
-                    effect:[
-                        {weighted_list_eocs:weightListMap[cate]},
-                        {math:["_eachCount","+=","1"]},
-                        {run_eocs:`${subeocid}_${cate}` as EocID} //调用自身递归
-                    ],
-                }}) satisfies EocEffect)),
+
+                //为每个slot创建eoc
+                ...EnchSlotList.flatMap(slot=>{
+                    //附魔子eoc
+                    const eocid = EMDef.genEocID(`IdentifyEnch_Each_${slot}`);
+                    //为每个附魔cate创建eoc 通过 identifyCond 排除不同cate的物品
+                    return (VaildEnchCategoryList.map(cate=>({run_eocs:{
+                        id:`${eocid}_${cate}` as EocID,
+                        eoc_type:"ACTIVATION",
+                        condition:{not:{or:[
+                            //次数超过尝试次数
+                            {math:["_eachCount",">",`${EnchCount}`]},
+                            //点数已满
+                            {math:[`n_${ENCH_POINT_CUR}`,">=",`n_${ENCH_POINT_MAX}`]},
+                            //槽位已满
+                            {math:[`n_${enchCurSlotCount(slot)}`,'>=',EnchSlotMaxVarMap[slot]]},
+                        ]}},
+                        effect:[
+                            {weighted_list_eocs:weightListMap[slot][cate]},
+                            {math:["_eachCount","+=","1"]},
+                            {run_eocs:`${eocid}_${cate}` as EocID} //调用自身递归
+                        ],
+                    }}) satisfies EocEffect))
+                }),
+
             ]},
             {u_message:"一件装备的详细属性被揭示了",type:"good"},
             {npc_set_flag:IS_IDENTIFYED_FLAG_ID},

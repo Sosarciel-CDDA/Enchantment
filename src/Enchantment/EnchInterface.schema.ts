@@ -12,7 +12,9 @@ export const VaildEnchCategoryList = [
 /**可用的附魔类型 */
 export type VaildEnchCategory = typeof VaildEnchCategoryList[number];
 type CategoryCond = {search_data:ItemSearchData[],condition?:BoolExpr};
-/**附魔类型映射 */
+/**附魔类型映射
+ * 一个物品不能有两个cate,仅会应用顺序第一个
+ */
 export const EnchTypeSearchDataMap:Record<VaildEnchCategory,CategoryCond> = {
     weapons :{search_data:[{category:"weapons"}]} ,
     armor   :{search_data:[{category:"armor"}]}   ,
