@@ -13,12 +13,12 @@ export async function buildDebugItem(dm:DataManager,enchInsList:EnchInsData[]){
 
     const enchTestList = [
         [EMDef.genActEoc("EnchTestAdd",[{run_eocs:INIT_ENCH_DATA_EOC_ID},{
-            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench.id,"add")),NONEEocId],
+            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench,"add")),NONEEocId],
             names:[...enchInsList.map(ench=>ench.name as string),"算了"],
             hide_failing:true
         }]),"添加附魔"],
         [EMDef.genActEoc("EnchTestRemove",[{
-            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench.id,"remove")),NONEEocId],
+            run_eoc_selector:[...enchInsList.map(ench=>operaEID(ench,"remove")),NONEEocId],
             names:[...enchInsList.map(ench=>ench.name as string),"算了"],
             hide_failing:true
         }]),"移除附魔"],

@@ -110,7 +110,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
     //辅助eoc
     //添加附魔子eoc
     const addeocList = enchDataList.map(ins=>
-        EMDef.genActEoc(operaEID(ins.id,"add"),[
+        EMDef.genActEoc(operaEID(ins,"add"),[
             //添加等级变体flag与主flag
             {npc_set_flag:ins.id},
             //如果是诅咒的则加上诅咒flag
@@ -141,7 +141,7 @@ function buildOperaEoc(enchDataList:EnchInsData[]){
     //移除附魔子eoc
     //由于物品可能含有多个诅咒, 所以单一附魔移除不会移除 被诅咒 IS_CURSED_FLAG_ID flag
     const removeeocList = enchDataList.map(ins=>
-        EMDef.genActEoc(operaEID(ins.id,"remove"),[
+        EMDef.genActEoc(operaEID(ins,"remove"),[
             //添加移除变体flag
             {npc_unset_flag:ins.id},
             //减少附魔点数
@@ -194,7 +194,7 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
             ... enchDataList //遍历所有附魔
                 .filter(ench=>ench.category.includes(cate))
                 .filter(ins=>(ins.weight??0)>0)
-                .map(ins=>[operaEID(ins.id,"add"),ins.weight ?? 0] satisfies [EocID,NumberExpr])
+                .map(ins=>[operaEID(ins,"add"),ins.weight ?? 0] satisfies [EocID,NumberExpr])
         ];
     }
 
@@ -270,7 +270,7 @@ function buildRemoveCurseEoc(enchDataList:EnchInsData[]){
     const removeCurseEffects:EocEffect[] = [{npc_unset_flag:IS_CURSED_FLAG_ID}];
     enchDataList.forEach(ins=>{
         if(ins.is_curse==true)
-            removeCurseEffects.push({run_eocs:operaEID(ins.id,"remove")})
+            removeCurseEffects.push({run_eocs:operaEID(ins,"remove")})
     });
     const removeCurse = EMDef.genActEoc(REMOVE_CURSE_EOC_ID,[...removeCurseEffects],undefined,true);
     return [removeCurse];
