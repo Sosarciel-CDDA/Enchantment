@@ -88,7 +88,7 @@ export type EnchCtor = {
 }
 
 /**json附魔表单 */
-export type EnchJsonTable = EnchInsData&{
-    /**此附魔的附加数据 */
-    addition_data?:AnyCddaJson[]
-};
+export type EnchJsonTable = ((EnchInsData&{
+    /**附魔 */
+    type:"CustomEnch"
+})|AnyCddaJson)[];
