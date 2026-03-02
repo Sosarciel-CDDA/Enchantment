@@ -3,7 +3,7 @@ import { EffectActiveCondList, EffectActiveCondSearchDataMap, EnchInsData, EnchS
 import { JObject } from "@zwa73/utils";
 import { EMDef } from "@/src/EMDefine";
 import { BoolExpr, Eoc, EocEffect, EocID, Flag, NumberExpr } from "@sosarciel-cdda/schema";
-import { COMPLETE_ENCH_INIT, ENCH_EMPTY_IN, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID, ENCH_RARE_CUR, RareEnum } from "./Define";
+import { COMPLETE_ENCH_INIT, ENCH_CHANGE, ENCH_POINT_CUR, ENCH_POINT_MAX, enchInsVar, IDENTIFY_EOC_ID, INIT_ENCH_DATA_EOC_ID, IS_CURSED_FLAG_ID, IS_IDENTIFYED_FLAG_ID, ITEM_ENCH_TYPE, MAX_ENCH_COUNT, operaEID, REMOVE_CURSE_EOC_ID, UPGRADE_ENCH_CACHE_EOC_ID, formatArray, enchCurSlotCount, CREATE_ALIAS_EOC_ID, ENCH_RARE_CUR, RareEnum } from "./Define";
 import { getEnchConflictsExpr } from "./Category";
 
 
@@ -187,10 +187,10 @@ function buildIdentifyEoc(enchDataList:EnchInsData[]){
             .reduce((enchsum,ench)=>enchsum + (ench.weight??0),0);
 
         //空附魔权重
-        const noneWeight  = weightSum/ENCH_EMPTY_IN;
+        //const noneWeight  = weightSum/ENCH_EMPTY_IN;
         //将空eoc加入表单
         weightListMap[cate] = [
-            [noneEnchEoc.id,noneWeight],
+            //[noneEnchEoc.id,noneWeight],
             ... enchDataList //遍历所有附魔
                 .filter(ench=>ench.category.includes(cate))
                 .filter(ins=>(ins.weight??0)>0)
