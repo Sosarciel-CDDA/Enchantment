@@ -31,9 +31,9 @@ export const ENCH_CHANGE    = "EnchChange";
 
 /**附魔稀有度数值枚举 */
 export const RareEnum = {
-    Magic  :{lvl:1,weightVar:"RandartWeight",pointVar:"RandartPoint",name:"魔法物品"  },
-    Epic   :{lvl:2,weightVar:"EpicWeight"   ,pointVar:"EpicPoint"   ,name:"奇迹物品"  },
-    Randart:{lvl:3,weightVar:"MagicWeight"  ,pointVar:"MagicPoint"  ,name:"神话物品"  },
+    Magic  :{lvl:1,weightVar:"MagicWeight"    ,pointVar:"MagicPoint"    ,name:"魔法物品"  },
+    Epic   :{lvl:2,weightVar:"EpicWeight"     ,pointVar:"EpicPoint"     ,name:"奇迹物品"  },
+    Randart:{lvl:3,weightVar:"RandartWeight"  ,pointVar:"RandartPoint"  ,name:"神话物品"  },
 }
 
 
