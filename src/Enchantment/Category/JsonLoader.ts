@@ -10,7 +10,8 @@ export const loadJsonEnch = async (dm:DataManager)=>{
     const enchFileList = await UtilFT.fileSearchRegex(EnchDir,'**/*.{json,json5}');
     const result = await Promise.all(enchFileList.map(async filepath=>{
         const data = await UtilFT.loadJSONFile<JObject[]>(filepath,{json5:true});
-        dm.addData(data.filter(v=>v.type!='CustomEnch'),'JsonEnch',path.relative(DATA_DIR,filepath))
+        const parsed = path.parse(path.relative(DATA_DIR,filepath));
+        dm.addData(data.filter(v=>v.type!='CustomEnch'),'JsonEnch',parsed.dir,parsed.name);
         return data.filter(v=>v.type=='CustomEnch') as EnchInsData[];
     })).then(v=>v.flat());
     pushConflictsKey(...result);
